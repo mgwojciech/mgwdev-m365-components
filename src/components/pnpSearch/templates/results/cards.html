@@ -32,7 +32,7 @@
         <div class="template--cardContainer">
             {{#each data.items as |item|}}    
                 {{#> resultTypes item=item}}
-                    <pnp-documentcard class="template--card" 
+                    <pnp-document-card class="template--card" 
                         data-ui-test-id="resultCard" 
                         data-item="{{JSONstringify item}}" 
                         data-fields-configuration="{{JSONstringify @root.properties.layoutProperties.documentCardFields}}" 
@@ -42,7 +42,7 @@
                         data-context="{{JSONstringify @root}}"
                         data-theme-variant="{{JSONstringify @root.theme}}"
                         >
-                    </pnp-documentcard>
+                    </pnp-document-card>
                 {{/resultTypes}}
 
             {{/each}}

@@ -13,30 +13,33 @@ export interface IDetailsListColumnConfiguration {
     /**
      * Indicates if the value is an Handlebars expression
      */
-    useHandlebarsExpr: boolean;
+    useHandlebarsExpr?: boolean;
   
     /**
      * Column maximum width in px
      */
-    maxWidth: string;
+    maxWidth?: string;
   
     /**
      * Column minimum width in px
      */
-    minWidth: string;
+    minWidth?: string;
   
     /**
      * Enable sorting on the column
      */
-    enableSorting: boolean;
+    enableSorting?: boolean;
   
     /**
      * Enable column dynamic resize
      */
-    isResizable: boolean;
+    isResizable?: boolean;
   
     /**
      * Enable multiline column
      */
-    isMultiline: boolean;
+    isMultiline?: boolean;
+    isResultItemLink?: boolean;
+    sortIdx?: number;
+    uniqueId?: string;
   }

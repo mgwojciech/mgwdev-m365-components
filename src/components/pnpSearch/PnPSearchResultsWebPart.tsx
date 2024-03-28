@@ -24,6 +24,12 @@ const usePnPSearchStyles = makeStyles({
             justifyContent: "space-between",
             ...shorthands.gap(tokens.spacingHorizontalM, tokens.spacingVerticalM)
         },
+        "& .document-card-container":{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "space-between",
+            ...shorthands.gap(tokens.spacingHorizontalM, tokens.spacingVerticalM)
+        }
     }
 });
 
@@ -54,8 +60,8 @@ export function PnPSearchResultsWebPart(props: IPnPSearchResultsWebPartProps) {
     const templateService = React.useMemo(() => new TemplateService(), []);
 
     const loadTemplate = async () => {
-        const resultTemplate = await import("./templates/results/cards.html?raw");
-        const templateString = resultTemplate.default;
+        const resultTemplate = props.config.inlineTemplateText ? props.config.inlineTemplateText : (await import("./templates/results/cards.html?raw")).default;
+        const templateString = resultTemplate;
 
         setTemplate(templateString);
     }
@@ -64,7 +70,8 @@ export function PnPSearchResultsWebPart(props: IPnPSearchResultsWebPartProps) {
         PnPContext.webPartContext.set(props.id, new PnPWebPartContext(graphClient, searchClient));
         templateService.registerCustomHelpers();
         templateService.registerCustomComponent("pnp-detailslist", DetailsListWebComponent);
-        templateService.registerCustomComponent("pnp-documentcard", DocumentCardWebComponent);
+        templateService.registerCustomComponent("pnp-document-card", DocumentCardWebComponent);
+        //templateService.registerCustomComponent("pnp-document-card", DocumentCardWebComponent);
         loadTemplate();
         searchClient.getData().then((data) => {
             setItems(data);
@@ -84,13 +91,25 @@ export function PnPSearchResultsWebPart(props: IPnPSearchResultsWebPartProps) {
         const temp = Handlebars.compile(template);
         return temp({
             data: { items: items },
+            items: items,
+            hasPrimaryOrSecondaryResults: items.length > 0,
+            showResultsCount: props.config.showResultsCount,
+            paging:{
+                itemsCountPerPage: props.config.paging.itemsCountPerPage,
+                pagingRange: props.config.paging.pagingRange,
+                showPaging: props.config.paging.showPaging,
+                hideDisabled: props.config.paging.hideDisabled,
+                hideFirstLastPages: props.config.paging.hideFirstLastPages,
+                hideNavigation: props.config.paging.hideNavigation,
+                totalItemsCount: searchClient.allItemsCount
+            },
             properties: {
                 layoutProperties: props.config.templateParameters
             }
         })
     }
 
-    return <div className={classNames.root} data-webPartId={props.id}>
+    return <div className={classNames.root} data-webpartid={props.id}>
         <h2>{props.config.webPartTitle}</h2>
         {loading && <Spinner />}
         {error && <div>{error}</div>}

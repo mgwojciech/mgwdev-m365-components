@@ -32,6 +32,7 @@ export interface IPnPSearchResultProps {
     'sortList@odata.type': string;
     sortList: SortList[];
     templateParameters: TemplateParameters;
+    inlineTemplateText?: string;
   }
   
   export interface TemplateParameters {
