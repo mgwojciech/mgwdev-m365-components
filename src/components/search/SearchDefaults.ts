@@ -1,0 +1,17 @@
+export const defaultSelectFields = [
+    "Title",
+    "Path",
+    "Description",
+    "ListItemId",
+    "IdentityListItemId",
+    "IdentityListId",
+    "IdentitySiteCollectionId",
+    "IdentityWebId",
+    "LastModifiedTime",
+    "ViewsLifeTime",
+    "ViewsRecent",
+    "owstaxidmetadataalltagsinfo",
+    "DriveId",
+    "Author",
+    "AuthorOwsUser",
+]

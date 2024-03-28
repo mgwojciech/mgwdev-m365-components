@@ -1,0 +1,62 @@
+{
+  "name": "mgwdev-m365-components",
+  "private": false,
+  "version": "0.0.1",
+  "scripts": {
+    "start": "vite",
+    "build": "tsc && vite build",
+    "build-lib": "gulp build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "SharePoint",
+    "MSGraph"
+  ],
+  "author": "m.g.wojciechowski@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "@azure/msal-browser": "^3.6.0",
+    "@fluentui/react-components": "^9.42.0",
+    "handlebars": "^4.7.8",
+    "handlebars-group-by": "^1.0.1",
+    "handlebars-helpers": "^0.10.0",
+    "jspath": "^0.4.0",
+    "mgwdev-m365-helpers": "^0.1.13",
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0",
+    "vite-plugin-dts": "^3.6.4"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@microsoft/rush-stack-compiler-4.7": "^0.1.0",
+    "@microsoft/sp-build-web": "^1.18.2",
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.55.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "jest-environment-jsdom": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/mwdev-m365-components.umd.js",
+  "module": "./dist/mwdev-m365-components.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/mwdev-m365-components.es.js",
+      "require": "./dist/mwdev-m365-components.umd.js"
+    }
+  }
+}
