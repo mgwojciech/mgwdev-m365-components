@@ -1,4 +1,4 @@
-import { IAuthenticationService, IMsalAuthenticationConfig, Msal2AuthenticationService } from "mgwdev-m365-helpers";
+import { IAuthenticationService } from "mgwdev-m365-helpers";
 import * as React from "react";
 
 export interface IAuthenticationContextProps {
@@ -7,35 +7,22 @@ export interface IAuthenticationContextProps {
 
 export interface IAuthenticationContextProviderProps extends React.PropsWithChildren<{}> {
     authProvider?: IAuthenticationService;
-    authProviderFactory?: () => Promise<IAuthenticationService>;
-    msalAuthConfig?: IMsalAuthenticationConfig;
 }
 
-export const AuthenticationContext = React.createContext<IAuthenticationContextProps | undefined>(undefined);
+export const AuthenticationContext = React.createContext<IAuthenticationContextProps>({
+    authProvider: {
+        getAccessToken: async () => { throw new Error("No auth provider available") }
+    }
+});
 
 export const useAuthentication = () => React.useContext<IAuthenticationContextProps>(AuthenticationContext);
 
 export const AuthenticationContextProvider = (props: IAuthenticationContextProviderProps) => {
-    const [authProvider, setAuthProvider] = React.useState<IAuthenticationService | undefined>(undefined);
-    const isProviderAvailable = React.useMemo(()=> authProvider !== undefined, [authProvider]);
-
-    React.useEffect(() => {
-        if (props.authProvider) {
-            setAuthProvider(props.authProvider);
-        } else if (props.authProviderFactory) {
-            props.authProviderFactory().then((authProvider) => {
-                setAuthProvider(authProvider);
-            });
-        } else if (props.msalAuthConfig) {
-            setAuthProvider(new Msal2AuthenticationService(props.msalAuthConfig));
-        }
-    }, [props.authProvider, props.authProviderFactory, props.msalAuthConfig]);
-
-    return (
-        <AuthenticationContext.Provider value={{
-            authProvider: authProvider
+  
+    return (<AuthenticationContext.Provider value={{
+            authProvider: props.authProvider!
         }}>
-            {isProviderAvailable && props.children}
+            {props.children}
         </AuthenticationContext.Provider>
     );
 }

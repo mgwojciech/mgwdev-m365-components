@@ -9,7 +9,9 @@ export interface IGraphContextProps {
 export interface IGraphContextProviderProps extends React.PropsWithChildren<{}> {
     graphClient?: IHttpClient;
 }
-export const GraphContext = React.createContext<IGraphContextProps | undefined>(undefined);
+export const GraphContext = React.createContext<IGraphContextProps>({
+    graphClient: new FetchHttpClient()
+});
 export const useGraph = () => React.useContext<IGraphContextProps>(GraphContext);
 
 export const GraphContextProvider = (props: IGraphContextProviderProps) => {
@@ -25,13 +27,13 @@ export const GraphContextProvider = (props: IGraphContextProviderProps) => {
     }
 
     const [graphClient, setGraphClient] = React.useState<IHttpClient | undefined>(getGraphClient());
-
+  
     React.useEffect(() => {
         setGraphClient(getGraphClient());
     }, [props.graphClient, authProvider]);
 
     return (
-        <GraphContext.Provider value={{
+        graphClient && <GraphContext.Provider value={{
             graphClient: graphClient
         }}>
             {props.children}

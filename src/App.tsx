@@ -2,10 +2,15 @@ import * as React from 'react'
 import { AuthenticationContextProvider, GraphContextProvider, SPContextProvider } from './context'
 import { Test } from './components/Test'
 import { M365Search } from './components'
-import { PnPSearchResultsWebPart } from './components/pnpSearch/PnPSearchResultsWebPart'
+import { DrivePicker, PeoplePicker, TeamPicker } from './components/common/graphEntityPicker'
+import { SitePicker } from './components/common/graphEntityPicker/SitePicker'
+import { Msal2AuthenticationService } from 'mgwdev-m365-helpers/lib/services/Msal2AuthenticationService'
+import { ListPickerPicker } from './components/common/graphEntityPicker/ListPicker'
+import { IEntityWithIdAndDisplayName } from './model/IEntityWithIdAndDisplayName'
+import { GetSiteTemplateContext } from './components/provisioning/GetSiteTemplate'
 
 function App() {
-  const pnpSearchWPConfig ={
+  const pnpSearchWPConfig = {
     "queryTemplate": "{searchTerms}",
     "selectedProperties": "Title,Path,Created,Filename,SiteLogo,PreviewUrl,PictureThumbnailURL,ServerRedirectedPreviewURL,ServerRedirectedURL,HitHighlightedSummary,FileType,contentclass,ServerRedirectedEmbedURL,ParentLink,DefaultEncodingURL,owstaxidmetadataalltagsinfo,Author,AuthorOWSUSER,SPSiteUrl,SiteTitle,IsContainer,IsListItem,HtmlFileType,SiteId,WebId,UniqueID,OriginalPath,FileExtension,IsDocument,NormSiteID,NormWebID,NormListID,NormUniqueID",
     "enableQueryRules": false,
@@ -194,10 +199,11 @@ function App() {
       ]
     }
   }
+  const clientId = import.meta.env.VITE_FRONTEND_CLIENT_ID
+  const authService = new Msal2AuthenticationService({ clientId: clientId }, false);
+  const [site, setSite] = React.useState<IEntityWithIdAndDisplayName>()
   return (
-    <AuthenticationContextProvider msalAuthConfig={{
-      clientId: import.meta.env.VITE_FRONTEND_CLIENT_ID
-    }} >
+    <AuthenticationContextProvider authProvider={authService} >
       <GraphContextProvider>
         <SPContextProvider siteUrl={import.meta.env.VITE_SITE_URL} >
           <>
@@ -221,7 +227,12 @@ function App() {
                 }
               }]
             }} /> */}
-            <PnPSearchResultsWebPart id="test-wp-1" config={pnpSearchWPConfig} />
+            <PeoplePicker key="people-picker" label="People picker" description="Pick some people here" />
+            <TeamPicker key="team-picker" label="Team picker" description="Pick a team here" />
+            <DrivePicker key="drive-picker" label="Drive picker" description="Pick a drive here" />
+            <SitePicker onEntitySelected={(site) => setSite(site[0])} label="Site picker" description="Pick a site " />
+            {site && <ListPickerPicker siteId={site.id} label="List picker" description={`Pick a list from ${site.displayName}`} />}
+            <GetSiteTemplateContext />
           </>
         </SPContextProvider>
       </GraphContextProvider>

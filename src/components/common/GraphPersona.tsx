@@ -13,7 +13,6 @@ export interface IGraphPersonaProps extends PersonaProps {
     id?: string;
     user?: IUser;
     showPresence?: boolean;
-    showSecondaryText?: boolean;
     graphClient?: IHttpClient;
 }
 
@@ -65,7 +64,9 @@ export function GraphPersona(props: IGraphPersonaProps) {
         setLoading(false);
     };
     React.useEffect(() => {
-        getUserInfo();
+        if (!props.user) {
+            getUserInfo();
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
@@ -77,9 +78,8 @@ export function GraphPersona(props: IGraphPersonaProps) {
 
     return (
         <Persona
-            {...props}
             primaryText={primaryText}
-            secondaryText={props.showSecondaryText ? props.secondaryText || user?.jobTitle : undefined}
+            secondaryText={user?.jobTitle}
             avatar={{
                 image: { src: user?.photo },
                 initials: user?.displayName?.split(" ").map(x => x[0]).join("") || props.name?.split(" ").map(x => x[0]).join(""),
@@ -92,6 +92,7 @@ export function GraphPersona(props: IGraphPersonaProps) {
                     }
                     : undefined
             }
+            {...props}
         />
     );
 }
