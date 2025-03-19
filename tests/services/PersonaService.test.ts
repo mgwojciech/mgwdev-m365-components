@@ -1,6 +1,5 @@
 import { vi, describe, test, expect } from 'vitest';
 import { PersonaService } from '../../src/services/PersonaService';
-import { a } from 'vitest/dist/suite-IbNSsUWN.js';
 
 describe("PersonaService", () => {
     test("should get user from graph", async () => {

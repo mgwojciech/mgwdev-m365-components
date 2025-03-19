@@ -3,7 +3,7 @@ import { AbstractGraphEntityPicker, IAbstractGraphEntityPickerProps } from "./Ab
 import { useGraph } from "../../../context";
 import { IEntityWithIdAndDisplayName } from "../../../model/IEntityWithIdAndDisplayName";
 import { IHttpClient, IUser, PeopleProvider } from "mgwdev-m365-helpers";
-import { GraphPersona } from "../GraphPersona";
+import { GraphPersonaStandalone } from "../GraphPersona";
 
 export function PeoplePicker(props: Partial<IAbstractGraphEntityPickerProps<IEntityWithIdAndDisplayName>>) {
     const { graphClient } = useGraph();
@@ -25,7 +25,7 @@ export function PeoplePickerStandalone(props: Partial<IAbstractGraphEntityPicker
             if (user.photo) {
                 user.photo = `data:image/png;base64,${user.photo.replace('"', "").replace('"', "")}`
             }
-            return <GraphPersona showPresence user={user} graphClient={props.graphClient} />
+            return <GraphPersonaStandalone showPresence user={user} graphClient={props.graphClient} />
         }}
     />
 }

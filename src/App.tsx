@@ -1,13 +1,14 @@
 import * as React from 'react'
 import { AuthenticationContextProvider, GraphContextProvider, SPContextProvider } from './context'
 import { Test } from './components/Test'
-import { M365Search } from './components'
+import { M365Search, SPPermissionTrimmedComponent } from './components'
 import { DrivePicker, PeoplePicker, TeamPicker } from './components/common/graphEntityPicker'
 import { SitePicker } from './components/common/graphEntityPicker/SitePicker'
 import { Msal2AuthenticationService } from 'mgwdev-m365-helpers/lib/services/Msal2AuthenticationService'
 import { ListPickerPicker } from './components/common/graphEntityPicker/ListPicker'
 import { IEntityWithIdAndDisplayName } from './model/IEntityWithIdAndDisplayName'
-import { GetSiteTemplateContext } from './components/provisioning/GetSiteTemplate'
+import { Text, Spinner } from '@fluentui/react-components'
+import { GraphGroupMembershipTrimmedComponent } from "./components/common/GraphGroupMembershipTrimmedComponent"
 
 function App() {
   const pnpSearchWPConfig = {
@@ -232,7 +233,13 @@ function App() {
             <DrivePicker key="drive-picker" label="Drive picker" description="Pick a drive here" />
             <SitePicker onEntitySelected={(site) => setSite(site[0])} label="Site picker" description="Pick a site " />
             {site && <ListPickerPicker siteId={site.id} label="List picker" description={`Pick a list from ${site.displayName}`} />}
-            <GetSiteTemplateContext />
+            {/* <GetSiteTemplateContext /> */}
+            <SPPermissionTrimmedComponent role={"editListItems"}>
+              <Text>Test SP</Text>
+            </SPPermissionTrimmedComponent>
+            <GraphGroupMembershipTrimmedComponent groupId="71a8d60d-7a8c-4ab2-b27b-00416367cc0d" placeholder={<Spinner />} >
+              <Text>Test</Text>
+            </GraphGroupMembershipTrimmedComponent>
           </>
         </SPContextProvider>
       </GraphContextProvider>

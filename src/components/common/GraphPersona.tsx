@@ -13,15 +13,11 @@ export interface IGraphPersonaProps extends PersonaProps {
     id?: string;
     user?: IUser;
     showPresence?: boolean;
-    graphClient?: IHttpClient;
 }
 
-export function GraphPersona(props: IGraphPersonaProps) {
+export function GraphPersonaStandalone(props: IGraphPersonaProps & { graphClient: IHttpClient }) {
     const { id } = props;
     let graphClient = props.graphClient;
-    if (!graphClient) {
-        graphClient = (useGraph()).graphClient;
-    }
     const getPresence = (presenceString?: string) => {
         switch (presenceString) {
             case "":
@@ -95,4 +91,10 @@ export function GraphPersona(props: IGraphPersonaProps) {
             {...props}
         />
     );
+}
+
+export function GraphPersona(props: IGraphPersonaProps) {
+    const { graphClient } = useGraph();
+
+    return <GraphPersonaStandalone {...props} graphClient={graphClient} />
 }

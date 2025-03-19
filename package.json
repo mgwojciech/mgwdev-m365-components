@@ -1,7 +1,7 @@
 {
   "name": "mgwdev-m365-components",
   "private": false,
-  "version": "0.0.1",
+  "version": "0.0.5",
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
@@ -21,11 +21,12 @@
   "dependencies": {
     "@azure/msal-browser": "^3.6.0",
     "@fluentui/react-components": "^9.42.0",
+    "@testing-library/react": "^16.2.0",
     "handlebars": "^4.7.8",
     "handlebars-group-by": "^1.0.1",
     "handlebars-helpers": "^0.10.0",
     "jspath": "^0.4.0",
-    "mgwdev-m365-helpers": "^0.1.13",
+    "mgwdev-m365-helpers": "^0.2.10",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
     "vite-plugin-dts": "^3.6.4"
@@ -37,6 +38,7 @@
   "devDependencies": {
     "@microsoft/rush-stack-compiler-4.7": "^0.1.0",
     "@microsoft/sp-build-web": "^1.18.2",
+    "@testing-library/jest-dom": "^6.6.3",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
@@ -47,6 +49,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "jest-environment-jsdom": "^29.7.0",
+    "jsdom": "^26.0.0",
     "ts-jest": "^29.1.1",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
