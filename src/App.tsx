@@ -9,6 +9,7 @@ import { ListPickerPicker } from './components/common/graphEntityPicker/ListPick
 import { IEntityWithIdAndDisplayName } from './model/IEntityWithIdAndDisplayName'
 import { Text, Spinner } from '@fluentui/react-components'
 import { GraphGroupMembershipTrimmedComponent } from "./components/common/GraphGroupMembershipTrimmedComponent"
+import { M365CopilotSearch } from './components/search/M365CopilotSearch'
 
 function App() {
   const pnpSearchWPConfig = {
@@ -201,7 +202,8 @@ function App() {
     }
   }
   const clientId = import.meta.env.VITE_FRONTEND_CLIENT_ID
-  const authService = new Msal2AuthenticationService({ clientId: clientId }, false);
+  const tenantId = import.meta.env.VITE_FRONTEND_TENANT_ID || "organizations"
+  const authService = new Msal2AuthenticationService({ clientId: clientId, tenantId: tenantId }, false);
   const [site, setSite] = React.useState<IEntityWithIdAndDisplayName>()
   return (
     <AuthenticationContextProvider authProvider={authService} >
@@ -240,6 +242,9 @@ function App() {
             <GraphGroupMembershipTrimmedComponent groupId="71a8d60d-7a8c-4ab2-b27b-00416367cc0d" placeholder={<Spinner />} >
               <Text>Test</Text>
             </GraphGroupMembershipTrimmedComponent>
+            <M365CopilotSearch dataProviderProps={{
+              queryTemplate: "SiteId:4ab2b7d6-0079-4ef7-92d2-0ee8948fd864"
+            }} />
           </>
         </SPContextProvider>
       </GraphContextProvider>

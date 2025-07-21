@@ -3,6 +3,7 @@ import { IDocumentSearchResult, IGraphSearchResult } from "../../model";
 import { useGraph } from "../../context";
 import { ThumbnailUtils } from "../../utils";
 import { Body1, Button, Caption1, Card, CardFooter, CardHeader, CardPreview, makeStyles, shorthands, tokens } from "@fluentui/react-components";
+import { Open16Regular } from "@fluentui/react-icons"
 import FileUtils from "../../utils/FileUtils";
 
 export interface IDefaultDocumentCardProps {
@@ -99,10 +100,10 @@ export const DefaultDocumentCard = (props: IDefaultDocumentCardProps) => {
         </p>
 
         <CardFooter>
-            {/* <Button appearance="primary" icon={<Open16Regular />}>
+            <Button as="a" href={props.document.fields.path} appearance="primary" icon={<Open16Regular />}>
                 Open
             </Button>
-            <Button icon={<Share16Regular />}>Share</Button> */}
+            {/* <Button icon={<Share16Regular />}>Share</Button> */}
         </CardFooter>
     </Card>
 }
