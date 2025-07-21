@@ -53,7 +53,7 @@ export function AbstractGraphEntityPicker<T extends IEntityWithIdAndDisplayName>
     }, [inputValue])
     
     if (props.renderOverride) {
-        return props.renderOverride(entities, isLoading, loadEntities);
+        return <>{props.renderOverride(entities, isLoading, loadEntities)}</>;
     }
 
     return <Field label={props.label} hint={props.description}>

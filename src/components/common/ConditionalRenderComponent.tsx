@@ -17,7 +17,7 @@ export function ConditionalRenderComponent(props: IConditionalRenderComponentPro
     },[])
 
     if(loading && props.placeholder){
-        return props.placeholder;
+        return <>{props.placeholder}</>;
     }
-    return shouldRender ? props.children : <></>
+    return shouldRender ? <>{props.children}</> : <></>
 }

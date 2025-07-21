@@ -1,7 +1,7 @@
 {
   "name": "mgwdev-m365-components",
   "private": false,
-  "version": "0.0.6",
+  "version": "0.0.7",
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@microsoft/rush-stack-compiler-4.7": "^0.1.0",
-    "@microsoft/sp-build-web": "^1.18.2",
+    "@microsoft/sp-build-web": "^1.21.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
