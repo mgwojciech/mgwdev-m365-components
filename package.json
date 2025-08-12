@@ -1,7 +1,7 @@
 {
   "name": "mgwdev-m365-components",
   "private": false,
-  "version": "0.0.8",
+  "version": "0.0.9",
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
