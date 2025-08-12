@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useAuthentication } from "./AuthenticationContext";
-import { AuthHttpClient, FetchHttpClient, IHttpClient } from "mgwdev-m365-helpers";
+import { AuthHttpClient, DataverseBatchClient, FetchHttpClient, IHttpClient } from "mgwdev-m365-helpers";
 
 export interface IDataverseContextProps {
     dataverseClient: IHttpClient;
@@ -10,6 +10,8 @@ export interface IDataverseContextProps {
 export interface IDataverseContextProviderProps extends React.PropsWithChildren<{}> {
     dataverseResource: string;
     dataverseClient?: IHttpClient;
+    autoBatch?: boolean;
+    apiPath?: string;
 }
 export const DataverseContext = React.createContext<IDataverseContextProps>({
     dataverseClient: new FetchHttpClient()
@@ -23,15 +25,18 @@ export const DataverseContextProvider = (props: IDataverseContextProviderProps) 
             return props.dataverseClient;
         }
         else if (authProvider) {
-            let authHttpClient = new AuthHttpClient(authProvider, new FetchHttpClient());
-            authHttpClient.resourceUri = props.dataverseResource;
-            return authHttpClient;
+            let client: IHttpClient = new AuthHttpClient(authProvider, new FetchHttpClient());
+            (client as AuthHttpClient).resourceUri = props.dataverseResource;
+            if (props.autoBatch) {
+                client = new DataverseBatchClient(client, props.dataverseResource, props.apiPath, 500);
+            }
+            return client;
         }
         return undefined;
     }
 
     const [dataverseClient, setDataverseClient] = React.useState<IHttpClient | undefined>(getDataverseClient());
-  
+
     React.useEffect(() => {
         setDataverseClient(getDataverseClient());
     }, [props.dataverseClient, authProvider]);
