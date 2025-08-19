@@ -10,6 +10,7 @@ import { IEntityWithIdAndDisplayName } from './model/IEntityWithIdAndDisplayName
 import { Text, Spinner } from '@fluentui/react-components'
 import { GraphGroupMembershipTrimmedComponent } from "./components/common/GraphGroupMembershipTrimmedComponent"
 import { M365CopilotSearch } from './components/search/M365CopilotSearch'
+import { SearchInputWithSuggestions } from './components/search/SearchInputWithSuggestions'
 
 function App() {
   const pnpSearchWPConfig = {
@@ -210,8 +211,8 @@ function App() {
       <GraphContextProvider>
         <SPContextProvider siteUrl={import.meta.env.VITE_SITE_URL} >
           <>
-            {/* <M365Search dataProviderProps={{
-              queryTemplate: "{searchTerms} AND (contentclass:STS_ListItem OR IsDocument:True) -FileType:aspx",
+            <M365Search dataProviderProps={{
+              queryTemplate: "{searchTerms} ", //AND (contentclass:STS_ListItem OR IsDocument:True) -FileType:aspx
               aggregations: [{
                 field: "FileType",
                 size: 10,
@@ -229,7 +230,9 @@ function App() {
                   minimumCount: 0
                 }
               }]
-            }} /> */}
+            }}
+              searchInputComponent={(props) => <SearchInputWithSuggestions onSearch={props.onSearch} query="" />}
+            />
             <PeoplePicker key="people-picker" label="People picker" description="Pick some people here" />
             <TeamPicker key="team-picker" label="Team picker" description="Pick a team here" />
             <DrivePicker key="drive-picker" label="Drive picker" description="Pick a drive here" />
