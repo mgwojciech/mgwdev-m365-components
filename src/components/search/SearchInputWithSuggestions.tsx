@@ -2,7 +2,7 @@ import { Button, Input, makeStyles, mergeClasses, shorthands, Spinner, tokens } 
 import * as React from "react";
 import { useGraph } from "../../context";
 import { DebounceHandler, GraphSearchInputSuggestionServiceBuilder, SearchInputSuggestionService } from "mgwdev-m365-helpers";
-import { DismissRegular } from "@fluentui/react-icons"
+import { DismissRegular, SendRegular } from "@fluentui/react-icons"
 
 const useSearchInputWithSuggestionsStyles = makeStyles({
     root: {
@@ -77,7 +77,9 @@ export function SearchInputWithSuggestions(props: {
 
     return <div className={classNames.root}>
         <Input ref={inputRef} className={classNames.searchInput}
-            contentAfter={loading && <Spinner size="tiny" />}
+            contentAfter={loading ? <Spinner size="tiny" /> : <Button appearance="transparent" title="Search" onClick={() => {
+                props.onSearch(input);
+            }} icon={<SendRegular />} />}
             value={input} onChange={(e, data) => {
                 setInput(data.value);
                 DebounceHandler.debounce("search-input", async () => {
@@ -104,7 +106,7 @@ export function SearchInputWithSuggestions(props: {
                         }
                     }
                 }
-                if(e.key === "Escape"){
+                if (e.key === "Escape") {
                     setOpenSuggestions(false);
                 }
             }} />
@@ -179,6 +181,7 @@ export function SearchInputWithSuggestions(props: {
                                 setOpenSuggestions(false);
                                 setSearchThroughProperties(true);
                                 inputRef.current?.focus()
+                                props.onSearch(newInput);
                             }}
                         >
                             {r}
