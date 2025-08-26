@@ -26,6 +26,7 @@
     "handlebars-group-by": "^1.0.1",
     "handlebars-helpers": "^0.10.0",
     "jspath": "^0.4.0",
+    "mgwdev-m365-helpers": "^0.2.19",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
     "vite-plugin-dts": "^3.6.4"

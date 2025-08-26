@@ -47,6 +47,7 @@ const useSearchInputWithSuggestionsStyles = makeStyles({
         }
     }
 })
+const comparers = [":", "=", "<", ">", "<=", ">="]
 
 export function SearchInputWithSuggestions(props: {
     onSearch: (query: string) => void,
@@ -174,9 +175,13 @@ export function SearchInputWithSuggestions(props: {
                     {
                         !searchThroughProperties && propertySearchResults.map((r, index) => <li><Button className={classNames.suggestionButton} appearance="transparent" key={index}
                             onClick={() => {
-                                const temp = input.split(searchThroughProperties ? " " : ":");
-                                const lastWord = temp[temp.length - 1];
-                                const newInput = input.replace(lastWord, r.replace(" ", "+").replace(" ", "+").replace(" ", "+").replace(" ", "+").replace(" ", "+"))
+                                const inputFragments = input.split(" ");
+                                let lastWord = inputFragments[inputFragments.length - 1];
+                                let lastUsedComparer = comparers.find(c => lastWord.indexOf(c) > 0);
+                                if(lastUsedComparer){
+                                    lastWord = lastWord.split(lastUsedComparer)[1];
+                                }
+                                const newInput = input.replace(lastWord, r.replace(/ /g, "+"))
                                 setInput(newInput)
                                 setOpenSuggestions(false);
                                 setSearchThroughProperties(true);
