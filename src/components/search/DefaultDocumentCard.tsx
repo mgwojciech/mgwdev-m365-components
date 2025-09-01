@@ -12,11 +12,11 @@ export interface IDefaultDocumentCardProps {
 }
 const useStyles = makeStyles({
     title: {
-        ...shorthands.margin(0, 0, "12px"),
+        margin: "0,0, 12px",
     },
 
     description: {
-        ...shorthands.margin(0, 0, "12px"),
+        margin: "0,0, 12px",
     },
 
     card: {
@@ -25,11 +25,14 @@ const useStyles = makeStyles({
         height: "fit-content",
     },
     image: {
-        width: "20rem",
-        height: "7rem",
+        width: "20rem!important",
+        height: "7rem!important",
     },
     text: {
-        ...shorthands.margin(0),
+        margin: "0",
+        lineBreak: "strict",
+        whiteSpace: "nowrap",
+        height: "1.5rem",
     },
     imageIconWrapper: {
         width: "20rem!important",
@@ -38,6 +41,9 @@ const useStyles = makeStyles({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: tokens.colorNeutralBackground3,
+    },
+    cardHeader: {
+
     }
 });
 export const DefaultDocumentCard = (props: IDefaultDocumentCardProps) => {
@@ -72,6 +78,7 @@ export const DefaultDocumentCard = (props: IDefaultDocumentCardProps) => {
         </CardPreview>
 
         <CardHeader
+            className={styles.cardHeader}
             image={
                 <img
                     src={FileUtils.getFileImageUrl(props.document.fields.path)}
@@ -82,10 +89,16 @@ export const DefaultDocumentCard = (props: IDefaultDocumentCardProps) => {
             }
             header={
                 <Body1>
-                    <b>{props.document.fields.title}</b>
+                    <b style={{
+                        lineBreak: "strict",
+                        whiteSpace: "nowrap"
+                    }}>{props.document.fields.title}</b>
                 </Body1>
             }
-            description={<Caption1>{props.document.fields.author}</Caption1>}
+            description={<Caption1 style={{
+                lineBreak: "strict",
+                whiteSpace: "nowrap"
+            }}>{props.document.fields.author}</Caption1>}
             action={
                 <Button
                     appearance="transparent"

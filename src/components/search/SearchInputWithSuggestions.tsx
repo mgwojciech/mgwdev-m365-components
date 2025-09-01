@@ -13,7 +13,6 @@ const useSearchInputWithSuggestionsStyles = makeStyles({
         minWidth: "800px"
     },
     suggestionsSurface: {
-
         position: "absolute",
         top: "100%",
         marginTop: "0rem",
@@ -75,47 +74,107 @@ export function SearchInputWithSuggestions(props: {
         })
     }, []);
 
+    const onSearchInputChanged = (e, data) => {
+        setInput(data.value);
+        DebounceHandler.debounce("search-input", async () => {
+            setLoading(true);
+            const suggestions = await inputSuggestionService.getSuggestions(data.value);
+            setPropertySearchResults(suggestions.value);
+            setSearchThroughProperties(suggestions.areSuggestionsProps);
+            if (suggestions.value && suggestions.value.length > 0)
+                setOpenSuggestions(true);
+            setLoading(false);
+        }, 500)
+    }
+
+    const onSearchInputKeyDown = (e) => {
+        if (e.key === "Enter") {
+            props.onSearch(input);
+        }
+        if (e.key === "ArrowDown") {
+            const firstLiChild = listRef.current?.firstChild;
+            if (firstLiChild) {
+                const firstButton = firstLiChild.firstChild
+                if (firstButton) {
+                    (firstButton as HTMLButtonElement).focus();
+                    e.preventDefault();
+                    return;
+                }
+            }
+        }
+        if (e.key === "Escape") {
+            setOpenSuggestions(false);
+        }
+    }
+
+    const onUlSuggestionsKeyDown = (e) => {
+        const focusableElements = listRef?.current.querySelectorAll("button");
+        const currentFocus = e.target;
+        let currentFocusIndex = null;
+        focusableElements.forEach((el, key) => {
+            if (el === currentFocus) {
+                currentFocusIndex = key
+            }
+        })
+        if (e.key === "ArrowUp") {
+            if (currentFocusIndex === 0) {
+                inputRef.current?.focus();
+                e.preventDefault();
+                return;
+            }
+            else {
+                focusableElements.item(currentFocusIndex - 1).focus();
+                e.preventDefault();
+                return;
+            }
+        }
+        if (e.key === "ArrowDown") {
+            if (currentFocusIndex === (focusableElements.length - 1)) {
+                focusableElements.item(0).focus();
+                e.preventDefault();
+                return;
+            }
+            else {
+                focusableElements.item(currentFocusIndex + 1).focus();
+                e.preventDefault();
+                return;
+            }
+        }
+    }
+
+    const onLiButtonSuggestionClick = (prop) => {
+        const temp = input.split(searchThroughProperties ? " " : ":");
+        const lastWord = temp[temp.length - 1];
+        const newInput = input.replace(lastWord, prop + ":")
+        setInput(newInput)
+        setOpenSuggestions(false);
+        setSearchThroughProperties(false);
+        inputRef.current?.focus()
+    }
+
+    const onLiButtonSuggestionValueClick = (prop) => {
+        const inputFragments = input.split(" ");
+        let lastWord = inputFragments[inputFragments.length - 1];
+        let lastUsedComparer = comparers.find(c => lastWord.indexOf(c) > 0);
+        if (lastUsedComparer) {
+            lastWord = lastWord.split(lastUsedComparer)[1];
+        }
+        const newInput = input.replace(lastWord, prop.replace(/ /g, "+"))
+        setInput(newInput)
+        setOpenSuggestions(false);
+        setSearchThroughProperties(true);
+        inputRef.current?.focus()
+        props.onSearch(newInput);
+    }
+
 
     return <div className={classNames.root}>
         <Input ref={inputRef} className={classNames.searchInput}
             contentAfter={loading ? <Spinner size="tiny" /> : <Button appearance="transparent" title="Search" onClick={() => {
                 props.onSearch(input);
             }} icon={<SendRegular />} />}
-            value={input} onChange={(e, data) => {
-                setInput(data.value);
-                DebounceHandler.debounce("search-input", async () => {
-                    setLoading(true);
-                    const suggestions = await inputSuggestionService.getSuggestions(data.value);
-                    setPropertySearchResults(suggestions.value);
-                    setSearchThroughProperties(suggestions.areSuggestionsProps);
-                    if (suggestions.value && suggestions.value.length > 0)
-                        setOpenSuggestions(true);
-                    setLoading(false);
-                }, 500)
-            }} onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                    props.onSearch(input);
-                }
-                if (e.key === "ArrowDown") {
-                    const firstLiChild = listRef.current?.firstChild;
-                    if (firstLiChild) {
-                        const firstButton = firstLiChild.firstChild
-                        if (firstButton) {
-                            (firstButton as HTMLButtonElement).focus();
-                            e.preventDefault();
-                            return;
-                        }
-                    }
-                }
-                if (e.key === "Escape") {
-                    setOpenSuggestions(false);
-                }
-            }} />
-        <div className={mergeClasses(classNames.suggestionsSurface, openSuggestions && classNames.suggestionsSurfaceVisible)}
-
-            onBlur={() => {
-                //setOpenSuggestions(false);
-            }}>
+            value={input} onChange={onSearchInputChanged} onKeyDown={onSearchInputKeyDown} />
+        <div className={mergeClasses(classNames.suggestionsSurface, openSuggestions && classNames.suggestionsSurfaceVisible)}>
             <div style={{
                 width: "100%",
                 display: "flex",
@@ -126,67 +185,17 @@ export function SearchInputWithSuggestions(props: {
                 }} title={"Close"} icon={<DismissRegular />}></Button>
             </div>
             <div className={classNames.suggestionsWrapper}>
-                <ul className={classNames.suggestionsList} ref={listRef} onKeyDown={(e) => {
-                    const focusableElements = listRef?.current.querySelectorAll("button");
-                    const currentFocus = e.target;
-                    let currentFocusIndex = null;
-                    focusableElements.forEach((el, key) => {
-                        if (el === currentFocus) {
-                            currentFocusIndex = key
-                        }
-                    })
-                    if (e.key === "ArrowUp") {
-                        if (currentFocusIndex === 0) {
-                            inputRef.current?.focus();
-                            e.preventDefault();
-                            return;
-                        }
-                        else {
-                            focusableElements.item(currentFocusIndex - 1).focus();
-                            e.preventDefault();
-                            return;
-                        }
-                    }
-                    if (e.key === "ArrowDown") {
-                        if (currentFocusIndex === (focusableElements.length - 1)) {
-                            focusableElements.item(0).focus();
-                            e.preventDefault();
-                            return;
-                        }
-                        else {
-                            focusableElements.item(currentFocusIndex + 1).focus();
-                            e.preventDefault();
-                            return;
-                        }
-                    }
-                }}>
+                <ul className={classNames.suggestionsList} ref={listRef} onKeyDown={onUlSuggestionsKeyDown}>
                     {searchThroughProperties && propertySearchResults.map(prop => <li><Button className={classNames.suggestionButton} appearance="transparent"
                         key={prop}
                         onClick={() => {
-                            const temp = input.split(searchThroughProperties ? " " : ":");
-                            const lastWord = temp[temp.length - 1];
-                            const newInput = input.replace(lastWord, prop + ":")
-                            setInput(newInput)
-                            setOpenSuggestions(false);
-                            setSearchThroughProperties(false);
-                            inputRef.current?.focus()
+                            onLiButtonSuggestionClick(prop);
                         }}
                     >{prop}</Button></li>)}
                     {
                         !searchThroughProperties && propertySearchResults.map((r, index) => <li><Button className={classNames.suggestionButton} appearance="transparent" key={index}
                             onClick={() => {
-                                const inputFragments = input.split(" ");
-                                let lastWord = inputFragments[inputFragments.length - 1];
-                                let lastUsedComparer = comparers.find(c => lastWord.indexOf(c) > 0);
-                                if(lastUsedComparer){
-                                    lastWord = lastWord.split(lastUsedComparer)[1];
-                                }
-                                const newInput = input.replace(lastWord, r.replace(/ /g, "+"))
-                                setInput(newInput)
-                                setOpenSuggestions(false);
-                                setSearchThroughProperties(true);
-                                inputRef.current?.focus()
-                                props.onSearch(newInput);
+                                onLiButtonSuggestionValueClick(r);
                             }}
                         >
                             {r}
