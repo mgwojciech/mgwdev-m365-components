@@ -51,7 +51,7 @@ export function AbstractGraphEntityPicker<T extends IEntityWithIdAndDisplayName>
     React.useEffect(() => {
         loadEntities(inputValue);
     }, [inputValue])
-    
+
     if (props.renderOverride) {
         return <>{props.renderOverride(entities, isLoading, loadEntities)}</>;
     }
@@ -78,7 +78,9 @@ export function AbstractGraphEntityPicker<T extends IEntityWithIdAndDisplayName>
                     newSelected = [selectedEntity];
                 }
                 newSelected = newSelected.filter((x) => !!x);
-                props.onEntitySelected && props.onEntitySelected(newSelected);
+                if (props.onEntitySelected) {
+                    props.onEntitySelected(newSelected);
+                }
                 setSelectedEntities(newSelected);
                 setInputValue(newSelected.map((x) => x.displayName).join(", "))
             }}

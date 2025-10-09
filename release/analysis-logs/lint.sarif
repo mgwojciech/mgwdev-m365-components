@@ -1,0 +1,950 @@
+{
+  "version": "2.1.0",
+  "$schema": "http://json.schemastore.org/sarif-2.1.0-rtm.5",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "ESLint",
+          "informationUri": "https://eslint.org",
+          "version": "8.57.1",
+          "rules": [
+            {
+              "id": "react-refresh/only-export-components",
+              "properties": {
+                "category": "No category provided"
+              },
+              "shortDescription": {
+                "text": "Please see details in message"
+              }
+            },
+            {
+              "id": "react-hooks/exhaustive-deps",
+              "helpUri": "https://github.com/facebook/react/issues/14920",
+              "properties": {},
+              "shortDescription": {
+                "text": "verifies the list of dependencies for Hooks like useEffect and similar"
+              }
+            }
+          ]
+        }
+      },
+      "artifacts": [
+        {
+          "location": {
+            "uri": "src/context/AuthenticationContext.tsx"
+          }
+        },
+        {
+          "location": {
+            "uri": "src/context/GraphContext.tsx"
+          }
+        },
+        {
+          "location": {
+            "uri": "src/context/SPContext.tsx"
+          }
+        },
+        {
+          "location": {
+            "uri": "src/context/DataverseContext.tsx"
+          }
+        },
+        {
+          "location": {
+            "uri": "src/context/index.tsx"
+          }
+        },
+        {
+          "location": {
+            "uri": "src/components/search/DefaultDocumentCard.tsx"
+          }
+        },
+        {
+          "location": {
+            "uri": "src/components/search/M365Search.tsx"
+          }
+        },
+        {
+          "location": {
+            "uri": "src/components/search/M365CopilotSearch.tsx"
+          }
+        },
+        {
+          "location": {
+            "uri": "src/components/common/graphEntityPicker/AbstractGraphEntityPicker.tsx"
+          }
+        },
+        {
+          "location": {
+            "uri": "src/components/common/graphEntityPicker/ChannelPicker.tsx"
+          }
+        },
+        {
+          "location": {
+            "uri": "src/components/common/graphEntityPicker/index.tsx"
+          }
+        },
+        {
+          "location": {
+            "uri": "src/components/common/ConditionalRenderComponent.tsx"
+          }
+        },
+        {
+          "location": {
+            "uri": "src/components/common/index.tsx"
+          }
+        },
+        {
+          "location": {
+            "uri": "src/components/index.tsx"
+          }
+        },
+        {
+          "location": {
+            "uri": "src/index.tsx"
+          }
+        }
+      ],
+      "results": [
+        {
+          "level": "warning",
+          "message": {
+            "text": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/context/AuthenticationContext.tsx",
+                  "index": 0
+                },
+                "region": {
+                  "startLine": 18,
+                  "startColumn": 14,
+                  "endLine": 18,
+                  "endColumn": 31,
+                  "snippet": {
+                    "text": "useAuthentication"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/context/GraphContext.tsx",
+                  "index": 1
+                },
+                "region": {
+                  "startLine": 15,
+                  "startColumn": 14,
+                  "endLine": 15,
+                  "endColumn": 22,
+                  "snippet": {
+                    "text": "useGraph"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "React Hook React.useEffect has a missing dependency: 'getGraphClient'. Either include it or remove the dependency array."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/context/GraphContext.tsx",
+                  "index": 1
+                },
+                "region": {
+                  "startLine": 33,
+                  "startColumn": 8,
+                  "endLine": 33,
+                  "endColumn": 41,
+                  "snippet": {
+                    "text": "[props.graphClient, authProvider]"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-hooks/exhaustive-deps",
+          "ruleIndex": 1
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/context/SPContext.tsx",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 18,
+                  "startColumn": 14,
+                  "endLine": 18,
+                  "endColumn": 19,
+                  "snippet": {
+                    "text": "useSP"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "React Hook React.useEffect has a missing dependency: 'getSPClient'. Either include it or remove the dependency array."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/context/SPContext.tsx",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 38,
+                  "startColumn": 8,
+                  "endLine": 38,
+                  "endColumn": 38,
+                  "snippet": {
+                    "text": "[props.spClient, authProvider]"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-hooks/exhaustive-deps",
+          "ruleIndex": 1
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/context/DataverseContext.tsx",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 19,
+                  "startColumn": 14,
+                  "endLine": 19,
+                  "endColumn": 26,
+                  "snippet": {
+                    "text": "useDataverse"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "React Hook React.useEffect has a missing dependency: 'getDataverseClient'. Either include it or remove the dependency array."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/context/DataverseContext.tsx",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 42,
+                  "startColumn": 8,
+                  "endLine": 42,
+                  "endColumn": 45,
+                  "snippet": {
+                    "text": "[props.dataverseClient, authProvider]"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-hooks/exhaustive-deps",
+          "ruleIndex": 1
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "This rule can't verify that `export *` only exports components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/context/index.tsx",
+                  "index": 4
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 41,
+                  "snippet": {
+                    "text": "export * from \"./AuthenticationContext\";"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "This rule can't verify that `export *` only exports components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/context/index.tsx",
+                  "index": 4
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "endLine": 2,
+                  "endColumn": 32,
+                  "snippet": {
+                    "text": "export * from \"./GraphContext\";"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "This rule can't verify that `export *` only exports components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/context/index.tsx",
+                  "index": 4
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "endLine": 3,
+                  "endColumn": 29,
+                  "snippet": {
+                    "text": "export * from \"./SPContext\";"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "This rule can't verify that `export *` only exports components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/context/index.tsx",
+                  "index": 4
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "endLine": 4,
+                  "endColumn": 36,
+                  "snippet": {
+                    "text": "export * from \"./DataverseContext\";"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "React Hook React.useEffect has missing dependencies: 'graphClient' and 'props.document.fields'. Either include them or remove the dependency array."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/components/search/DefaultDocumentCard.tsx",
+                  "index": 5
+                },
+                "region": {
+                  "startLine": 54,
+                  "startColumn": 8,
+                  "endLine": 54,
+                  "endColumn": 10,
+                  "snippet": {
+                    "text": "[]"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-hooks/exhaustive-deps",
+          "ruleIndex": 1
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "React Hook React.useEffect has a missing dependency: 'searchClient'. Either include it or remove the dependency array."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/components/search/M365Search.tsx",
+                  "index": 6
+                },
+                "region": {
+                  "startLine": 70,
+                  "startColumn": 8,
+                  "endLine": 70,
+                  "endColumn": 15,
+                  "snippet": {
+                    "text": "[query]"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-hooks/exhaustive-deps",
+          "ruleIndex": 1
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "React Hook React.useEffect has a missing dependency: 'searchClient'. Either include it or remove the dependency array."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/components/search/M365CopilotSearch.tsx",
+                  "index": 7
+                },
+                "region": {
+                  "startLine": 66,
+                  "startColumn": 8,
+                  "endLine": 66,
+                  "endColumn": 15,
+                  "snippet": {
+                    "text": "[query]"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-hooks/exhaustive-deps",
+          "ruleIndex": 1
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "React Hook React.useEffect has a missing dependency: 'loadEntities'. Either include it or remove the dependency array."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/components/common/graphEntityPicker/AbstractGraphEntityPicker.tsx",
+                  "index": 8
+                },
+                "region": {
+                  "startLine": 53,
+                  "startColumn": 8,
+                  "endLine": 53,
+                  "endColumn": 20,
+                  "snippet": {
+                    "text": "[inputValue]"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-hooks/exhaustive-deps",
+          "ruleIndex": 1
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "React Hook React.useEffect has a missing dependency: 'loadChannels'. Either include it or remove the dependency array."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/components/common/graphEntityPicker/ChannelPicker.tsx",
+                  "index": 9
+                },
+                "region": {
+                  "startLine": 26,
+                  "startColumn": 8,
+                  "endLine": 26,
+                  "endColumn": 22,
+                  "snippet": {
+                    "text": "[props.teamId]"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-hooks/exhaustive-deps",
+          "ruleIndex": 1
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "This rule can't verify that `export *` only exports components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/components/common/graphEntityPicker/index.tsx",
+                  "index": 10
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 45,
+                  "snippet": {
+                    "text": "export * from \"./AbstractGraphEntityPicker\";"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "This rule can't verify that `export *` only exports components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/components/common/graphEntityPicker/index.tsx",
+                  "index": 10
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "endLine": 2,
+                  "endColumn": 33,
+                  "snippet": {
+                    "text": "export * from \"./ChannelPicker\";"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "This rule can't verify that `export *` only exports components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/components/common/graphEntityPicker/index.tsx",
+                  "index": 10
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "endLine": 3,
+                  "endColumn": 31,
+                  "snippet": {
+                    "text": "export * from \"./DrivePicker\";"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "This rule can't verify that `export *` only exports components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/components/common/graphEntityPicker/index.tsx",
+                  "index": 10
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "endLine": 4,
+                  "endColumn": 30,
+                  "snippet": {
+                    "text": "export * from \"./TeamPicker\";"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "This rule can't verify that `export *` only exports components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/components/common/graphEntityPicker/index.tsx",
+                  "index": 10
+                },
+                "region": {
+                  "startLine": 5,
+                  "startColumn": 1,
+                  "endLine": 5,
+                  "endColumn": 32,
+                  "snippet": {
+                    "text": "export * from \"./PeoplePicker\";"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "This rule can't verify that `export *` only exports components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/components/common/graphEntityPicker/index.tsx",
+                  "index": 10
+                },
+                "region": {
+                  "startLine": 6,
+                  "startColumn": 1,
+                  "endLine": 6,
+                  "endColumn": 30,
+                  "snippet": {
+                    "text": "export * from \"./SitePicker\";"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "React Hook React.useEffect has a missing dependency: 'props'. Either include it or remove the dependency array. However, 'props' will change when *any* prop changes, so the preferred fix is to destructure the 'props' object outside of the useEffect call and refer to those specific props inside React.useEffect."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/components/common/ConditionalRenderComponent.tsx",
+                  "index": 11
+                },
+                "region": {
+                  "startLine": 17,
+                  "startColumn": 8,
+                  "endLine": 17,
+                  "endColumn": 31,
+                  "snippet": {
+                    "text": "[props.permissionCheck]"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-hooks/exhaustive-deps",
+          "ruleIndex": 1
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "This rule can't verify that `export *` only exports components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/components/common/index.tsx",
+                  "index": 12
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 32,
+                  "snippet": {
+                    "text": "export * from \"./GraphPersona\";"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "This rule can't verify that `export *` only exports components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/components/common/index.tsx",
+                  "index": 12
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "endLine": 2,
+                  "endColumn": 37,
+                  "snippet": {
+                    "text": "export * from \"./graphEntityPicker\";"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "This rule can't verify that `export *` only exports components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/components/common/index.tsx",
+                  "index": 12
+                },
+                "region": {
+                  "startLine": 3,
+                  "startColumn": 1,
+                  "endLine": 3,
+                  "endColumn": 48,
+                  "snippet": {
+                    "text": "export * from \"./SPPermissionTrimmedComponent\";"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "This rule can't verify that `export *` only exports components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/components/common/index.tsx",
+                  "index": 12
+                },
+                "region": {
+                  "startLine": 4,
+                  "startColumn": 1,
+                  "endLine": 4,
+                  "endColumn": 55,
+                  "snippet": {
+                    "text": "export * from \"./GraphGroupMembershipTrimmedComponent\""
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "This rule can't verify that `export *` only exports components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/components/index.tsx",
+                  "index": 13
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 26,
+                  "snippet": {
+                    "text": "export * from \"./search\";"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "This rule can't verify that `export *` only exports components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/components/index.tsx",
+                  "index": 13
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "endLine": 2,
+                  "endColumn": 26,
+                  "snippet": {
+                    "text": "export * from \"./common\";"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "This rule can't verify that `export *` only exports components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.tsx",
+                  "index": 14
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1,
+                  "endLine": 1,
+                  "endColumn": 27,
+                  "snippet": {
+                    "text": "export * from \"./context\";"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        },
+        {
+          "level": "warning",
+          "message": {
+            "text": "This rule can't verify that `export *` only exports components."
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/index.tsx",
+                  "index": 14
+                },
+                "region": {
+                  "startLine": 2,
+                  "startColumn": 1,
+                  "endLine": 2,
+                  "endColumn": 30,
+                  "snippet": {
+                    "text": "export * from \"./components\";"
+                  }
+                }
+              }
+            }
+          ],
+          "ruleId": "react-refresh/only-export-components",
+          "ruleIndex": 0
+        }
+      ]
+    }
+  ]
+}

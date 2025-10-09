@@ -6,7 +6,7 @@ export interface IGraphContextProps {
     graphClient: IHttpClient;
 }
 
-export interface IGraphContextProviderProps extends React.PropsWithChildren<{}> {
+export interface IGraphContextProviderProps extends React.PropsWithChildren<object> {
     graphClient?: IHttpClient;
 }
 export const GraphContext = React.createContext<IGraphContextProps>({
@@ -27,15 +27,14 @@ export const GraphContextProvider = (props: IGraphContextProviderProps) => {
     }
 
     const [graphClient, setGraphClient] = React.useState<IHttpClient | undefined>(getGraphClient());
-  
+
     React.useEffect(() => {
         setGraphClient(getGraphClient());
     }, [props.graphClient, authProvider]);
 
+    const contextProps = React.useMemo(() => ({ graphClient }), [graphClient])
     return (
-        graphClient && <GraphContext.Provider value={{
-            graphClient: graphClient
-        }}>
+        graphClient && <GraphContext.Provider value={contextProps}>
             {props.children}
         </GraphContext.Provider>
     );

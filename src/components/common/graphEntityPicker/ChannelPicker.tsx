@@ -25,7 +25,7 @@ export function ChannelPickerStandalone(props: IChannelPickerProps & { graphClie
         loadChannels();
     }, [props.teamId]);
 
-    const getData = async (search: string) => {
+    const getData = async () => {
         return await loadChannels();
     }
 

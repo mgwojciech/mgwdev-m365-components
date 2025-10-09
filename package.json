@@ -1,11 +1,11 @@
 {
   "name": "mgwdev-m365-components",
   "private": false,
-  "version": "0.0.9",
+  "version": "1.0.9-spfx-1.22",
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
-    "build-lib": "gulp build",
+    "build-lib": "heft build --clean",
     "test": "vitest",
     "test:report": "vitest --reporter=junit --outputFile.junit=./tests/TEST-mgwdev-m365-components.xml --watch=false",
     "test:coverage": "vitest run --coverage",
@@ -36,13 +36,16 @@
     "react-dom": ">=16.8.0"
   },
   "devDependencies": {
-    "@microsoft/rush-stack-compiler-4.7": "^0.1.0",
-    "@microsoft/sp-build-web": "^1.21.1",
+    "@microsoft/eslint-config-spfx": "^1.22.0-beta.2",
+    "@microsoft/eslint-plugin-spfx": "^1.22.0-beta.2",
+    "@microsoft/sp-module-interfaces": "^1.22.0-beta.2",
+    "@microsoft/spfx-web-build-rig": "^1.22.0-beta.2",
+    "@rushstack/eslint-config": "^4.3.0",
+    "@rushstack/heft": "^0.74.3",
     "@testing-library/jest-dom": "^6.6.3",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
+    "@typescript-eslint/parser": "^8.31.1",
     "@vitejs/plugin-react": "^4.2.1",
     "@vitest/coverage-v8": "^1.6.0",
     "eslint": "^8.55.0",
@@ -54,6 +57,9 @@
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
     "vitest": "^1.6.0"
+  },
+  "overrides": {
+    "@rushstack/heft": "0.74.3"
   },
   "files": [
     "dist"

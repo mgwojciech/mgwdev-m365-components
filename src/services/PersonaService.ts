@@ -25,7 +25,7 @@ export class PersonaService {
             const userResult = await userRequest.json();
             userId = userResult.id;
         }
-        let userCache = this.storageService.get<ICacheEntry<IUser>>(this.key + id);
+        const userCache = this.storageService.get<ICacheEntry<IUser>>(this.key + id);
         let user = userCache?.data;
         const userQuery = userId ? `/users/${userId}` : "/me";
         if (!user || userCache.expiration < new Date().getTime()) {

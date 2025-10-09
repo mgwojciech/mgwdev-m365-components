@@ -7,7 +7,7 @@ export interface ISPContextProps {
     siteUrl: string;
 }
 
-export interface ISPContextProviderProps extends React.PropsWithChildren<{}> {
+export interface ISPContextProviderProps extends React.PropsWithChildren<object> {
     spClient?: IHttpClient;
     siteUrl: string;
 }
@@ -24,7 +24,7 @@ export const SPContextProvider = (props: ISPContextProviderProps) => {
             return props.spClient;
         }
         else if (authProvider) {
-            let authClient = new AuthHttpClient(authProvider, new FetchHttpClient());
+            const authClient = new AuthHttpClient(authProvider, new FetchHttpClient());
             authClient.resourceUri = new URL(props.siteUrl).origin;
             return authClient
         }
@@ -32,16 +32,18 @@ export const SPContextProvider = (props: ISPContextProviderProps) => {
     }
 
     const [spClient, setSPClient] = React.useState<IHttpClient | undefined>(getSPClient());
-  
+
     React.useEffect(() => {
         setSPClient(getSPClient());
     }, [props.spClient, authProvider]);
 
+    const contextProps = React.useMemo(() => ({
+        spClient,
+        siteUrl: props.siteUrl
+    }), [props.siteUrl, spClient]);
+
     return (
-        spClient && <SPContext.Provider value={{
-            spClient: spClient,
-            siteUrl: props.siteUrl
-        }}>
+        spClient && <SPContext.Provider value={contextProps}>
             {props.children}
         </SPContext.Provider>
     );

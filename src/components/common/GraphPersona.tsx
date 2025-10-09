@@ -1,4 +1,4 @@
-import { IHttpClient, IUser, PeopleProvider } from "mgwdev-m365-helpers";
+import { IHttpClient, IUser } from "mgwdev-m365-helpers";
 import * as React from "react";
 import {
     Persona,
@@ -17,7 +17,7 @@ export interface IGraphPersonaProps extends PersonaProps {
 
 export function GraphPersonaStandalone(props: IGraphPersonaProps & { graphClient: IHttpClient }) {
     const { id } = props;
-    let graphClient = props.graphClient;
+    const graphClient = props.graphClient;
     const getPresence = (presenceString?: string) => {
         switch (presenceString) {
             case "":

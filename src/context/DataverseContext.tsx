@@ -7,7 +7,7 @@ export interface IDataverseContextProps {
     dataverseResource?: string;
 }
 
-export interface IDataverseContextProviderProps extends React.PropsWithChildren<{}> {
+export interface IDataverseContextProviderProps extends React.PropsWithChildren<object> {
     dataverseResource: string;
     dataverseClient?: IHttpClient;
     autoBatch?: boolean;
@@ -41,11 +41,13 @@ export const DataverseContextProvider = (props: IDataverseContextProviderProps) 
         setDataverseClient(getDataverseClient());
     }, [props.dataverseClient, authProvider]);
 
+    const contextProps = React.useMemo(() => ({
+        dataverseClient,
+        dataverseResource: props.dataverseResource
+    }), [props.dataverseResource, dataverseClient]);
+
     return (
-        dataverseClient && <DataverseContext.Provider value={{
-            dataverseClient: dataverseClient,
-            dataverseResource: props.dataverseResource
-        }}>
+        dataverseClient && <DataverseContext.Provider value={contextProps}>
             {props.children}
         </DataverseContext.Provider>
     );

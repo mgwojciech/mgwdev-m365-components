@@ -5,7 +5,7 @@ export interface IAuthenticationContextProps {
     authProvider: IAuthenticationService;
 }
 
-export interface IAuthenticationContextProviderProps extends React.PropsWithChildren<{}> {
+export interface IAuthenticationContextProviderProps extends React.PropsWithChildren<object> {
     authProvider?: IAuthenticationService;
 }
 
@@ -18,11 +18,12 @@ export const AuthenticationContext = React.createContext<IAuthenticationContextP
 export const useAuthentication = () => React.useContext<IAuthenticationContextProps>(AuthenticationContext);
 
 export const AuthenticationContextProvider = (props: IAuthenticationContextProviderProps) => {
-  
-    return (<AuthenticationContext.Provider value={{
-            authProvider: props.authProvider!
-        }}>
-            {props.children}
-        </AuthenticationContext.Provider>
+
+    const contextProps = React.useMemo(() => ({
+        authProvider: props.authProvider
+    }), [props.authProvider])
+    return (<AuthenticationContext.Provider value={contextProps}>
+        {props.children}
+    </AuthenticationContext.Provider>
     );
 }

@@ -3,12 +3,12 @@ import { useGraph } from "../../context";
 import { GraphSearchPagedDataProvider, IAggregationRequest } from "mgwdev-m365-helpers";
 import { Input, Spinner, makeStyles, shorthands, tokens } from "@fluentui/react-components";
 import { Search20Regular } from "@fluentui/react-icons";
-import { IGraphSearchResult } from "../../model";
+import { IDocumentSearchResult, IGraphSearchResult } from "../../model";
 import { defaultSelectFields } from "./SearchDefaults";
 import { DefaultDocumentCard } from "./DefaultDocumentCard";
 
 export interface IM365SearchProps<T> {
-    onResultRendering?: (result: IGraphSearchResult<T>) => any;
+    onResultRendering?: (result: IGraphSearchResult<T>) => JSX.Element;
     dataProviderProps?: {
         pageSize?: number;
         initialQuery?: string;
@@ -35,11 +35,11 @@ const useSearchStyles = makeStyles({
     },
 })
 
-export const M365Search = <T,>(props: IM365SearchProps<T>) => {
+export const M365Search = <T extends IDocumentSearchResult,>(props: IM365SearchProps<T>) => {
     const { graphClient } = useGraph();
     const classNames = useSearchStyles();
     const searchClient = React.useMemo(() => {
-        var provider = new GraphSearchPagedDataProvider<IGraphSearchResult<T>>(graphClient,
+        const provider = new GraphSearchPagedDataProvider<IGraphSearchResult<T>>(graphClient,
             [props.dataProviderProps?.entityType ?? "listItem"],
             props.dataProviderProps?.selectFields || defaultSelectFields);
         provider.queryTemplate = props.dataProviderProps?.queryTemplate;
@@ -53,8 +53,8 @@ export const M365Search = <T,>(props: IM365SearchProps<T>) => {
 
     const [loading, setLoading] = React.useState<boolean>(true);
     const [query, setQuery] = React.useState<string>(props.dataProviderProps?.initialQuery ?? "");
-    const [results, setResults] = React.useState<any[]>([]);
-    const [error, setError] = React.useState<any>(undefined);
+    const [results, setResults] = React.useState<IGraphSearchResult<T>[]>([]);
+    const [error, setError] = React.useState<Error>(undefined);
 
     React.useEffect(() => {
         searchClient.setQuery(query);
@@ -83,7 +83,7 @@ export const M365Search = <T,>(props: IM365SearchProps<T>) => {
             </div>
             <div>
                 {loading && <Spinner label="Loading..." />}
-                {!loading && error && <div>Error: {error}</div>}
+                {!loading && error && <div>Error: {error.message}</div>}
             </div>
             <div className={classNames.searchResults}>
                 {results.map((result, index) => {

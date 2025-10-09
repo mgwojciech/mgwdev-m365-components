@@ -11,8 +11,7 @@ export function SitePicker(props: Partial<IAbstractGraphEntityPickerProps<IEntit
 }
 
 export function SitePickerStandalone(props: Partial<IAbstractGraphEntityPickerProps<IEntityWithIdAndDisplayName>> & { graphClient: IHttpClient }) {
-    //@ts-ignore
-    const dataProvider = React.useRef(new GraphSearchPagedDataProvider<any>(props.graphClient,["site"], ["id", "displayName"]));
+    const dataProvider = React.useRef(new GraphSearchPagedDataProvider<IEntityWithIdAndDisplayName>(props.graphClient,["site"], ["id", "displayName"]));
     const getData = async (search: string) => {
         dataProvider.current.setQuery(search || "*");
         const results = await dataProvider.current.getData();

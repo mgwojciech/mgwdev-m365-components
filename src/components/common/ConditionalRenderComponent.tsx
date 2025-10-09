@@ -6,17 +6,17 @@ export interface IConditionalRenderComponentProps extends React.PropsWithChildre
     placeholder?: JSX.Element | string;
 }
 
-export function ConditionalRenderComponent(props: IConditionalRenderComponentProps){
+export function ConditionalRenderComponent(props: IConditionalRenderComponentProps) {
     const [shouldRender, setShouldRender] = React.useState(props.initialRender);
     const [loading, setLoading] = React.useState(true);
 
-    React.useEffect(()=>{
-        props.permissionCheck().then((result)=>{
+    React.useEffect(() => {
+        props.permissionCheck().then((result) => {
             setShouldRender(result);
-        }).finally(()=>setLoading(false))
-    },[])
+        }).finally(() => setLoading(false))
+    }, [props.permissionCheck])
 
-    if(loading && props.placeholder){
+    if (loading && props.placeholder) {
         return <>{props.placeholder}</>;
     }
     return shouldRender ? <>{props.children}</> : <></>

@@ -1,16 +1,13 @@
 import * as React from "react";
 import { useGraph, useSP } from "../context";
+import { IUser } from "mgwdev-m365-helpers";
 
-export interface ITestProps {
-
-}
-
-export function Test(props: ITestProps) {
+export function Test() {
     const { graphClient } = useGraph();
     const { spClient, siteUrl } = useSP();
     const [loading, setLoading] = React.useState<boolean>(true);
-    const [user, setUser] = React.useState<any>(undefined);
-    const [web, setWeb] = React.useState<any>(undefined);
+    const [user, setUser] = React.useState<IUser>(undefined);
+    const [web, setWeb] = React.useState<{ Title: string }>(undefined);
 
     React.useEffect(() => {
         if (graphClient) {
@@ -22,11 +19,11 @@ export function Test(props: ITestProps) {
             });
         }
         if (spClient) {
-            spClient.get(`${siteUrl}/_api/web`,{
+            spClient.get(`${siteUrl}/_api/web`, {
                 headers: {
                     "Accept": "application/json;odata=nometadata"
                 }
-            
+
             }).then((resp) => {
                 resp.json().then((response) => {
                     setWeb(response);
@@ -35,7 +32,7 @@ export function Test(props: ITestProps) {
             });
 
         }
-    }, [graphClient]);
+    }, [graphClient, siteUrl, spClient]);
 
     if (loading) {
         return <div>Loading...</div>;

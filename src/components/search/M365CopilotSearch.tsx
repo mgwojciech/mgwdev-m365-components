@@ -1,15 +1,15 @@
 import * as React from "react";
 import { useGraph } from "../../context";
 import { DebounceHandler } from "mgwdev-m365-helpers";
-import { CopilotRetrievalDataProvider } from "mgwdev-m365-helpers/lib/dal/dataProviders/CopilotRetrievalDataProvider"
+import { CopilotRetrievalDataProvider, ICopilotRetrievalResponseEntity } from "mgwdev-m365-helpers/lib/dal/dataProviders/CopilotRetrievalDataProvider"
 import { Input, Spinner, makeStyles, shorthands, tokens } from "@fluentui/react-components";
 import { Search20Regular } from "@fluentui/react-icons";
-import { IGraphSearchResult } from "../../model";
+import { IDocumentSearchResult, IGraphSearchResult } from "../../model";
 import { defaultSelectFields } from "./SearchDefaults";
 import { DefaultDocumentCard } from "./DefaultDocumentCard";
 
 export interface IM365CopilotSearchProps<T> {
-    onResultRendering?: (result: IGraphSearchResult<T>) => any;
+    onResultRendering?: (result: IGraphSearchResult<T>) => JSX.Element;
     dataProviderProps?: {
         pageSize?: number;
         initialQuery?: string;
@@ -34,11 +34,11 @@ const useSearchStyles = makeStyles({
     },
 })
 
-export const M365CopilotSearch = <T,>(props: IM365CopilotSearchProps<T>) => {
+export const M365CopilotSearch = <T extends IDocumentSearchResult,>(props: IM365CopilotSearchProps<T>) => {
     const { graphClient } = useGraph();
     const classNames = useSearchStyles();
     const searchClient = React.useMemo(() => {
-        var provider = new CopilotRetrievalDataProvider<T>(graphClient,
+        const provider = new CopilotRetrievalDataProvider<T>(graphClient,
             "sharePoint",
             props.dataProviderProps?.selectFields || defaultSelectFields,
             props.dataProviderProps?.queryTemplate
@@ -48,8 +48,8 @@ export const M365CopilotSearch = <T,>(props: IM365CopilotSearchProps<T>) => {
 
     const [loading, setLoading] = React.useState<boolean>(true);
     const [query, setQuery] = React.useState<string>(props.dataProviderProps?.initialQuery ?? "");
-    const [results, setResults] = React.useState<any[]>([]);
-    const [error, setError] = React.useState<any>(undefined);
+    const [results, setResults] = React.useState<ICopilotRetrievalResponseEntity<T>[]>([]);
+    const [error, setError] = React.useState<Error>(undefined);
 
     React.useEffect(() => {
         DebounceHandler.debounce("copilot-search", async () => {
@@ -81,12 +81,15 @@ export const M365CopilotSearch = <T,>(props: IM365CopilotSearchProps<T>) => {
             </div>
             <div>
                 {loading && <Spinner label="Loading..." />}
-                {!loading && error && <div>Error: {error}</div>}
+                {!loading && error && <div>Error: {error.message}</div>}
             </div>
             <div className={classNames.searchResults}>
                 {results.map((result, index) => {
                     return <div key={index}>
-                        {props?.onResultRendering ? props.onResultRendering(result) : <DefaultDocumentCard document={{
+                        {props?.onResultRendering ? props.onResultRendering({
+                            fields: result.resourceMetadata,
+                            ...result
+                        }) : <DefaultDocumentCard document={{
                             fields: result.resourceMetadata,
                             ...result
                         }} />}

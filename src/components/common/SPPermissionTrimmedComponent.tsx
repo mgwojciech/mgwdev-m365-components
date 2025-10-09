@@ -16,16 +16,16 @@ export function SPPermissionTrimmedComponent(props: ISPPermissionTrimmedComponen
 
 export function SPPermissionTrimmedComponentStandalone(props: ISPPermissionTrimmedComponentProps & { spClient: IHttpClient, siteUrl: string }) {
     return <ConditionalRenderComponent key={`${props.role}-${props.siteUrl}`} placeholder={props.placeholder} permissionCheck={async () => {
-        var url = `${props.siteUrl}/_api/web/EffectiveBasePermissions`
-        var effectivePermMaskResp = await props.spClient.get(url, {
+        const url = `${props.siteUrl}/_api/web/EffectiveBasePermissions`
+        const effectivePermMaskResp = await props.spClient.get(url, {
             headers: {
                 accept: "application/json"
             }
         });
-        var effectivePermMask = await effectivePermMaskResp.json();
-        var permissions = [];
-        for (var permLevelName in permissionKind) {
-            var hasPermissionLevel = PermissionCheckService.hasPermission(effectivePermMask, permissionKind[permLevelName]);
+        const effectivePermMask = await effectivePermMaskResp.json();
+        const permissions = [];
+        for (const permLevelName in permissionKind) {
+            const hasPermissionLevel = PermissionCheckService.hasPermission(effectivePermMask, permissionKind[permLevelName]);
             if (hasPermissionLevel) {
                 permissions.push(permLevelName)
             }
