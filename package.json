@@ -20,13 +20,13 @@
   "license": "MIT",
   "dependencies": {
     "@azure/msal-browser": "^3.6.0",
-    "@fluentui/react-components": "^9.42.0",
+    "@fluentui/react-components": "^9.68.3",
     "@testing-library/react": "^16.2.0",
     "handlebars": "^4.7.8",
     "handlebars-group-by": "^1.0.1",
     "handlebars-helpers": "^0.10.0",
     "jspath": "^0.4.0",
-    "mgwdev-m365-helpers": "^0.2.18",
+    "mgwdev-m365-helpers": "^0.2.19",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
     "vite-plugin-dts": "^3.6.4"
