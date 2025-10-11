@@ -58,9 +58,6 @@
     "vite": "^5.0.8",
     "vitest": "^1.6.0"
   },
-  "overrides": {
-    "@rushstack/heft": "0.74.3"
-  },
   "files": [
     "dist"
   ],
