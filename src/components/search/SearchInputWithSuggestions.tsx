@@ -1,4 +1,4 @@
-import { Button, Input, makeStyles, mergeClasses, shorthands, Spinner, tokens } from "@fluentui/react-components";
+import { Button, Input, makeStyles, mergeClasses, shorthands, Spinner, Switch, tokens } from "@fluentui/react-components";
 import * as React from "react";
 import { useGraph } from "../../context";
 import { DebounceHandler, GraphSearchInputSuggestionServiceBuilder, SearchInputSuggestionService } from "mgwdev-m365-helpers";
@@ -61,6 +61,7 @@ export function SearchInputWithSuggestions(props: {
     const [input, setInput] = React.useState<string>("");
     const [loading, setLoading] = React.useState(true);
     const [inputSuggestionService, setInputSuggestionService] = React.useState<SearchInputSuggestionService>()
+    const [useAdvancedSearch, setUseAdvancedSearch] = React.useState(true);
     const inputRef = React.useRef<HTMLInputElement>();
     const listRef = React.useRef<HTMLUListElement>();
     const builderRef = React.useRef(new GraphSearchInputSuggestionServiceBuilder(graphClient));
@@ -77,21 +78,23 @@ export function SearchInputWithSuggestions(props: {
 
 
     return <div className={classNames.root}>
-        <Input ref={inputRef} className={classNames.searchInput}
+        <Input contentBefore={<Switch title="Use adavenced search" label="Advanced" checked={useAdvancedSearch} onChange={() => setUseAdvancedSearch(!useAdvancedSearch)} />} ref={inputRef} className={classNames.searchInput}
             contentAfter={loading ? <Spinner size="tiny" /> : <Button appearance="transparent" title="Search" onClick={() => {
                 props.onSearch(input);
             }} icon={<SendRegular />} />}
             value={input} onChange={(e, data) => {
                 setInput(data.value);
-                DebounceHandler.debounce("search-input", async () => {
-                    setLoading(true);
-                    const suggestions = await inputSuggestionService.getSuggestions(data.value);
-                    setPropertySearchResults(suggestions.value);
-                    setSearchThroughProperties(suggestions.areSuggestionsProps);
-                    if (suggestions.value && suggestions.value.length > 0)
-                        setOpenSuggestions(true);
-                    setLoading(false);
-                }, 500)
+                if (useAdvancedSearch) {
+                    DebounceHandler.debounce("search-input", async () => {
+                        setLoading(true);
+                        const suggestions = await inputSuggestionService.getSuggestions(data.value);
+                        setPropertySearchResults(suggestions.value);
+                        setSearchThroughProperties(suggestions.areSuggestionsProps);
+                        if (suggestions.value && suggestions.value.length > 0)
+                            setOpenSuggestions(true);
+                        setLoading(false);
+                    }, 500)
+                }
             }} onKeyDown={(e) => {
                 if (e.key === "Enter") {
                     props.onSearch(input);
@@ -178,7 +181,7 @@ export function SearchInputWithSuggestions(props: {
                                 const inputFragments = input.split(" ");
                                 let lastWord = inputFragments[inputFragments.length - 1];
                                 let lastUsedComparer = comparers.find(c => lastWord.indexOf(c) > 0);
-                                if(lastUsedComparer){
+                                if (lastUsedComparer) {
                                     lastWord = lastWord.split(lastUsedComparer)[1];
                                 }
                                 const newInput = input.replace(lastWord, r.replace(/ /g, "+"))

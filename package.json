@@ -1,7 +1,7 @@
 {
   "name": "mgwdev-m365-components",
   "private": false,
-  "version": "1.0.9-spfx-1.22",
+  "version": "1.0.10-spfx-1.22",
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
