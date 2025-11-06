@@ -1,217 +1,239 @@
-import * as React from 'react'
-import { AuthenticationContextProvider, GraphContextProvider, SPContextProvider } from './context'
-import { Test } from './components/Test'
-import { M365Search, SPPermissionTrimmedComponent } from './components'
-import { DrivePicker, PeoplePicker, TeamPicker } from './components/common/graphEntityPicker'
-import { SitePicker } from './components/common/graphEntityPicker/SitePicker'
-import { Msal2AuthenticationService } from 'mgwdev-m365-helpers/lib/services/Msal2AuthenticationService'
-import { ListPickerPicker } from './components/common/graphEntityPicker/ListPicker'
-import { IEntityWithIdAndDisplayName } from './model/IEntityWithIdAndDisplayName'
-import { Text, Spinner } from '@fluentui/react-components'
-import { GraphGroupMembershipTrimmedComponent } from "./components/common/GraphGroupMembershipTrimmedComponent"
-import { M365CopilotSearch } from './components/search/M365CopilotSearch'
-import { SearchInputWithSuggestions } from './components/search/SearchInputWithSuggestions'
+import * as React from "react";
+import {
+  AuthenticationContextProvider,
+  DataverseContextProvider,
+  GraphContextProvider,
+  SPContextProvider,
+} from "./context";
+import { Test } from "./components/Test";
+import { M365Search, SPPermissionTrimmedComponent } from "./components";
+import {
+  DrivePicker,
+  PeoplePicker,
+  TeamPicker,
+} from "./components/common/graphEntityPicker";
+import { SitePicker } from "./components/common/graphEntityPicker/SitePicker";
+import { Msal2AuthenticationService } from "mgwdev-m365-helpers/lib/services/Msal2AuthenticationService";
+import { ListPickerPicker } from "./components/common/graphEntityPicker/ListPicker";
+import { IEntityWithIdAndDisplayName } from "./model/IEntityWithIdAndDisplayName";
+import { Text, Spinner, Link } from "@fluentui/react-components";
+import { GraphGroupMembershipTrimmedComponent } from "./components/common/GraphGroupMembershipTrimmedComponent";
+import { M365CopilotSearch } from "./components/search/M365CopilotSearch";
+import { SearchInputWithSuggestions } from "./components/search/SearchInputWithSuggestions";
+import { DataverseTableGrid } from "./components/datagrid/DataverseTableDataGrid";
+import { GraphEntityDataGrid } from "./components/datagrid/GraphEntityDataGrid";
+import { SPListDataGrid } from "./components/datagrid/SPListDataGrid";
 
 function App() {
   const pnpSearchWPConfig = {
-    "queryTemplate": "{searchTerms}",
-    "selectedProperties": "Title,Path,Created,Filename,SiteLogo,PreviewUrl,PictureThumbnailURL,ServerRedirectedPreviewURL,ServerRedirectedURL,HitHighlightedSummary,FileType,contentclass,ServerRedirectedEmbedURL,ParentLink,DefaultEncodingURL,owstaxidmetadataalltagsinfo,Author,AuthorOWSUSER,SPSiteUrl,SiteTitle,IsContainer,IsListItem,HtmlFileType,SiteId,WebId,UniqueID,OriginalPath,FileExtension,IsDocument,NormSiteID,NormWebID,NormListID,NormUniqueID",
-    "enableQueryRules": false,
-    "includeOneDriveResults": false,
-    "showBlank": true,
-    "showResultsCount": true,
-    "webPartTitle": "",
-    "enableLocalization": true,
-    "useDefaultSearchQuery": false,
+    queryTemplate: "{searchTerms}",
+    selectedProperties:
+      "Title,Path,Created,Filename,SiteLogo,PreviewUrl,PictureThumbnailURL,ServerRedirectedPreviewURL,ServerRedirectedURL,HitHighlightedSummary,FileType,contentclass,ServerRedirectedEmbedURL,ParentLink,DefaultEncodingURL,owstaxidmetadataalltagsinfo,Author,AuthorOWSUSER,SPSiteUrl,SiteTitle,IsContainer,IsListItem,HtmlFileType,SiteId,WebId,UniqueID,OriginalPath,FileExtension,IsDocument,NormSiteID,NormWebID,NormListID,NormUniqueID",
+    enableQueryRules: false,
+    includeOneDriveResults: false,
+    showBlank: true,
+    showResultsCount: true,
+    webPartTitle: "",
+    enableLocalization: true,
+    useDefaultSearchQuery: false,
     "resultTypes@odata.type": "#Collection(String)",
-    "resultTypes": [],
-    "useExternalRefinersDisplay": false,
-    "useExternalPaginationDisplay": false,
+    resultTypes: [],
+    useExternalRefinersDisplay: false,
+    useExternalPaginationDisplay: false,
     "appliedRefiners@odata.type": "#Collection(String)",
-    "appliedRefiners": [],
+    appliedRefiners: [],
     "refinersConfiguration@odata.type": "#Collection(String)",
-    "refinersConfiguration": [],
+    refinersConfiguration: [],
     "sortableFields@odata.type": "#Collection(String)",
-    "sortableFields": [],
+    sortableFields: [],
     "synonymList@odata.type": "#Collection(String)",
-    "synonymList": [],
-    "searchQueryLanguage": -1,
+    synonymList: [],
+    searchQueryLanguage: -1,
     "queryModifiers@odata.type": "#Collection(String)",
-    "queryModifiers": [],
-    "refinementFilters": "",
-    "selectedLayout": 2,
-    "defaultSearchQuery": "",
-    "inlineTemplateText": "<content id=\"template\">\n\n    <style>\n        \n        /* Insert your CSS overrides here */\n\n    </style>\n\n    <div class=\"template_root\">\n        <span>Test</span>\n            <div class=\"template_defaultCard\">\n                {{#if showResultsCount}}\n                <div class=\"template_resultCount\">\n                    <label class=\"ms-fontWeight-semibold\">{{getCountMessage @root.paging.totalItemsCount keywords}}</label>\n                </div>\n                {{/if}}\n                <div class=\"document-card-container\">\n                    {{#each items as |item|}}\n                    <div class=\"document-card-item\">\n                        {{#> resultTypes item=item}}\n\n                                <pnp-document-card data-item=\"{{JSONstringify item}}\" data-fields-configuration=\"{{JSONstringify @root.documentCardFields}}\" data-enable-preview=\"{{@root.enablePreview}}\" data-show-file-icon=\"{{@root.showFileIcon}}\" data-is-compact=\"{{@root.isCompact}}\"></pnp-document-card>\n                        {{/resultTypes}}\n                    </div>\n                    {{/each}}\n                </div>\n            </div>\n            {{#if @root.paging.showPaging}}\n                <pnp-pagination \n                    data-total-items=\"{{@root.paging.totalItemsCount}}\" \n                    data-hide-first-last-pages=\"{{@root.paging.hideFirstLastPages}}\"\n                    data-hide-disabled=\"{{@root.paging.hideDisabled}}\"\n                    data-hide-navigation=\"{{@root.paging.hideNavigation}}\"\n                    data-range=\"{{@root.paging.pagingRange}}\" \n                    data-items-count-per-page=\"{{@root.paging.itemsCountPerPage}}\" \n                    data-current-page-number=\"{{@root.paging.currentPageNumber}}\"\n                >\n                </pnp-pagination>\n            {{/if}}\n    </div>\n</content>\n\n<content id=\"placeholder\">   \n    <div class=\"placeholder_root\">\n        <div class=\"template_defaultCard\">\n            {{#if showResultsCount}}\n                <div class=\"template_resultCount\">\n                    <span class=\"shimmer line\" style=\"width: 20%\"></span>\n                </div>\n            {{/if}}\n            <div class=\"document-card-container\"> \n                {{#times @root.paging.totalItemsCount}}\n                    <div class=\"document-card-item\">\n                        <pnp-document-card-shimmers data-is-compact=\"{{@root.isCompact}}\"></pnp-document-card-shimmers>\n                    </div>\n                {{/times}}\n            </div>\n        </div>\n    </div>\n</content>",
-    "externalTemplateUrl": "",
-    "paging": {
+    queryModifiers: [],
+    refinementFilters: "",
+    selectedLayout: 2,
+    defaultSearchQuery: "",
+    inlineTemplateText:
+      '<content id="template">\n\n    <style>\n        \n        /* Insert your CSS overrides here */\n\n    </style>\n\n    <div class="template_root">\n        <span>Test</span>\n            <div class="template_defaultCard">\n                {{#if showResultsCount}}\n                <div class="template_resultCount">\n                    <label class="ms-fontWeight-semibold">{{getCountMessage @root.paging.totalItemsCount keywords}}</label>\n                </div>\n                {{/if}}\n                <div class="document-card-container">\n                    {{#each items as |item|}}\n                    <div class="document-card-item">\n                        {{#> resultTypes item=item}}\n\n                                <pnp-document-card data-item="{{JSONstringify item}}" data-fields-configuration="{{JSONstringify @root.documentCardFields}}" data-enable-preview="{{@root.enablePreview}}" data-show-file-icon="{{@root.showFileIcon}}" data-is-compact="{{@root.isCompact}}"></pnp-document-card>\n                        {{/resultTypes}}\n                    </div>\n                    {{/each}}\n                </div>\n            </div>\n            {{#if @root.paging.showPaging}}\n                <pnp-pagination \n                    data-total-items="{{@root.paging.totalItemsCount}}" \n                    data-hide-first-last-pages="{{@root.paging.hideFirstLastPages}}"\n                    data-hide-disabled="{{@root.paging.hideDisabled}}"\n                    data-hide-navigation="{{@root.paging.hideNavigation}}"\n                    data-range="{{@root.paging.pagingRange}}" \n                    data-items-count-per-page="{{@root.paging.itemsCountPerPage}}" \n                    data-current-page-number="{{@root.paging.currentPageNumber}}"\n                >\n                </pnp-pagination>\n            {{/if}}\n    </div>\n</content>\n\n<content id="placeholder">   \n    <div class="placeholder_root">\n        <div class="template_defaultCard">\n            {{#if showResultsCount}}\n                <div class="template_resultCount">\n                    <span class="shimmer line" style="width: 20%"></span>\n                </div>\n            {{/if}}\n            <div class="document-card-container"> \n                {{#times @root.paging.totalItemsCount}}\n                    <div class="document-card-item">\n                        <pnp-document-card-shimmers data-is-compact="{{@root.isCompact}}"></pnp-document-card-shimmers>\n                    </div>\n                {{/times}}\n            </div>\n        </div>\n    </div>\n</content>',
+    externalTemplateUrl: "",
+    paging: {
       "@odata.type": "#graph.Json",
-      "itemsCountPerPage": 10,
-      "pagingRange": 5,
-      "showPaging": true,
-      "hideDisabled": true,
-      "hideFirstLastPages": false,
-      "hideNavigation": false
+      itemsCountPerPage: 10,
+      pagingRange: 5,
+      showPaging: true,
+      hideDisabled: true,
+      hideFirstLastPages: false,
+      hideNavigation: false,
     },
     "sortList@odata.type": "#Collection(graph.Json)",
-    "sortList": [
+    sortList: [
       {
-        "sortField": "Created",
-        "sortDirection": 1
+        sortField: "Created",
+        sortDirection: 1,
       },
       {
-        "sortField": "Size",
-        "sortDirection": 2
-      }
+        sortField: "Size",
+        sortDirection: 2,
+      },
     ],
-    "templateParameters": {
+    templateParameters: {
       "@odata.type": "#graph.Json",
-      "showFileIcon": false,
+      showFileIcon: false,
       "documentCardFields@odata.type": "#Collection(graph.Json)",
-      "documentCardFields": [
+      documentCardFields: [
         {
-          "name": "Title",
-          "field": "title",
-          "value": "Title",
-          "useHandlebarsExpr": false,
-          "supportHtml": false
+          name: "Title",
+          field: "title",
+          value: "Title",
+          useHandlebarsExpr: false,
+          supportHtml: false,
         },
         {
-          "name": "Location",
-          "field": "location",
-          "value": "<a style=\"color:{{@themeVariant.palette.themePrimary}}\" href=\"{{SPSiteUrl}}\">{{SiteTitle}}</a>",
-          "useHandlebarsExpr": true,
-          "supportHtml": true
+          name: "Location",
+          field: "location",
+          value:
+            '<a style="color:{{@themeVariant.palette.themePrimary}}" href="{{SPSiteUrl}}">{{SiteTitle}}</a>',
+          useHandlebarsExpr: true,
+          supportHtml: true,
         },
         {
-          "name": "Tags",
-          "field": "tags",
-          "value": "{{#if owstaxidmetadataalltagsinfo}}<i class='ms-Icon ms-Icon--Tag' aria-hidden='true'></i> {{#each (split owstaxidmetadataalltagsinfo ',') as |tag| }}<a class=\"ms-Link\" href=\"#owstaxidmetadataalltagsinfo:'{{trim tag}}'\">{{tag}}</a>{{/each}}{{/if}}",
-          "useHandlebarsExpr": true,
-          "supportHtml": true
+          name: "Tags",
+          field: "tags",
+          value:
+            "{{#if owstaxidmetadataalltagsinfo}}<i class='ms-Icon ms-Icon--Tag' aria-hidden='true'></i> {{#each (split owstaxidmetadataalltagsinfo ',') as |tag| }}<a class=\"ms-Link\" href=\"#owstaxidmetadataalltagsinfo:'{{trim tag}}'\">{{tag}}</a>{{/each}}{{/if}}",
+          useHandlebarsExpr: true,
+          supportHtml: true,
         },
         {
-          "name": "Preview Image",
-          "field": "previewImage",
-          "value": "{{{getPreviewSrc item}}}",
-          "useHandlebarsExpr": true,
-          "supportHtml": false
+          name: "Preview Image",
+          field: "previewImage",
+          value: "{{{getPreviewSrc item}}}",
+          useHandlebarsExpr: true,
+          supportHtml: false,
         },
         {
-          "name": "Preview URL",
-          "field": "previewUrl",
-          "value": "{{#eq contentclass 'STS_ListItem_851'}}{{{DefaultEncodingURL}}}{{else}}{{#eq FileType 'pdf'}}{{#contains Path '-my.sharepoint'}}{{{ServerRedirectedEmbedURL}}}{{else}}{{{Path}}}{{/contains}}{{else}}{{{ServerRedirectedEmbedURL}}}{{/eq}}{{/eq}} ",
-          "useHandlebarsExpr": true,
-          "supportHtml": false
+          name: "Preview URL",
+          field: "previewUrl",
+          value:
+            "{{#eq contentclass 'STS_ListItem_851'}}{{{DefaultEncodingURL}}}{{else}}{{#eq FileType 'pdf'}}{{#contains Path '-my.sharepoint'}}{{{ServerRedirectedEmbedURL}}}{{else}}{{{Path}}}{{/contains}}{{else}}{{{ServerRedirectedEmbedURL}}}{{/eq}}{{/eq}} ",
+          useHandlebarsExpr: true,
+          supportHtml: false,
         },
         {
-          "name": "Date",
-          "field": "date",
-          "value": "{{getDate item.Created 'LL'}}",
-          "useHandlebarsExpr": true,
-          "supportHtml": false
+          name: "Date",
+          field: "date",
+          value: "{{getDate item.Created 'LL'}}",
+          useHandlebarsExpr: true,
+          supportHtml: false,
         },
         {
-          "name": "URL",
-          "field": "href",
-          "value": "{{getUrl item}}",
-          "useHandlebarsExpr": true,
-          "supportHtml": false
+          name: "URL",
+          field: "href",
+          value: "{{getUrl item}}",
+          useHandlebarsExpr: true,
+          supportHtml: false,
         },
         {
-          "name": "Author",
-          "field": "author",
-          "value": "Author",
-          "useHandlebarsExpr": false,
-          "supportHtml": false
+          name: "Author",
+          field: "author",
+          value: "Author",
+          useHandlebarsExpr: false,
+          supportHtml: false,
         },
         {
-          "name": "Profile Image",
-          "field": "profileImage",
-          "value": "{{#with (split AuthorOWSUSER '|')}}/_layouts/15/userphoto.aspx?size=L&username={{[0]}}{{/with}}",
-          "useHandlebarsExpr": true,
-          "supportHtml": false
+          name: "Profile Image",
+          field: "profileImage",
+          value:
+            "{{#with (split AuthorOWSUSER '|')}}/_layouts/15/userphoto.aspx?size=L&username={{[0]}}{{/with}}",
+          useHandlebarsExpr: true,
+          supportHtml: false,
         },
         {
-          "name": "IconSrc",
-          "field": "iconSrc",
-          "value": "{{IconSrc}}",
-          "useHandlebarsExpr": true,
-          "supportHtml": false
+          name: "IconSrc",
+          field: "iconSrc",
+          value: "{{IconSrc}}",
+          useHandlebarsExpr: true,
+          supportHtml: false,
         },
         {
-          "name": "IconExt",
-          "field": "iconExt",
-          "value": "{{IconExt}}",
-          "useHandlebarsExpr": true,
-          "supportHtml": false
+          name: "IconExt",
+          field: "iconExt",
+          value: "{{IconExt}}",
+          useHandlebarsExpr: true,
+          supportHtml: false,
         },
         {
-          "name": "File Extension",
-          "field": "fileExtension",
-          "value": "FileType",
-          "useHandlebarsExpr": false,
-          "supportHtml": false
-        }
+          name: "File Extension",
+          field: "fileExtension",
+          value: "FileType",
+          useHandlebarsExpr: false,
+          supportHtml: false,
+        },
       ],
       "detailsListColumns@odata.type": "#Collection(graph.Json)",
-      "detailsListColumns": [
+      detailsListColumns: [
         {
-          "name": "Title",
-          "value": "Title",
-          "useHandlebarsExpr": false,
-          "minWidth": "80",
-          "maxWidth": "300",
-          "enableSorting": false,
-          "isMultiline": false,
-          "isResizable": true,
-          "isResultItemLink": true,
-          "sortIdx": 1
+          name: "Title",
+          value: "Title",
+          useHandlebarsExpr: false,
+          minWidth: "80",
+          maxWidth: "300",
+          enableSorting: false,
+          isMultiline: false,
+          isResizable: true,
+          isResultItemLink: true,
+          sortIdx: 1,
         },
         {
-          "name": "Created",
-          "value": "{{getDate Created 'LL'}}",
-          "useHandlebarsExpr": true,
-          "minWidth": "80",
-          "maxWidth": "120",
-          "enableSorting": false,
-          "isMultiline": false,
-          "isResizable": false,
-          "isResultItemLink": false,
-          "sortIdx": 2
+          name: "Created",
+          value: "{{getDate Created 'LL'}}",
+          useHandlebarsExpr: true,
+          minWidth: "80",
+          maxWidth: "120",
+          enableSorting: false,
+          isMultiline: false,
+          isResizable: false,
+          isResultItemLink: false,
+          sortIdx: 2,
         },
         {
-          "name": "Summary",
-          "value": "{{getSummary HitHighlightedSummary}}",
-          "useHandlebarsExpr": true,
-          "minWidth": "80",
-          "maxWidth": "300",
-          "enableSorting": false,
-          "isMultiline": true,
-          "isResizable": false,
-          "isResultItemLink": false,
-          "sortIdx": 3
+          name: "Summary",
+          value: "{{getSummary HitHighlightedSummary}}",
+          useHandlebarsExpr: true,
+          minWidth: "80",
+          maxWidth: "300",
+          enableSorting: false,
+          isMultiline: true,
+          isResizable: false,
+          isResultItemLink: false,
+          sortIdx: 3,
         },
         {
-          "uniqueId": "9c4eb969-17ac-4bf0-928e-7eb916688378",
-          "name": "Author",
-          "value": "Author",
-          "minWidth": "50",
-          "maxWidth": "310",
-          "enableSorting": true
-        }
-      ]
-    }
-  }
-  const clientId = import.meta.env.VITE_FRONTEND_CLIENT_ID
-  const tenantId = import.meta.env.VITE_FRONTEND_TENANT_ID || "organizations"
-  const authService = new Msal2AuthenticationService({ clientId: clientId, tenantId: tenantId }, false);
-  const [site, setSite] = React.useState<IEntityWithIdAndDisplayName>()
+          uniqueId: "9c4eb969-17ac-4bf0-928e-7eb916688378",
+          name: "Author",
+          value: "Author",
+          minWidth: "50",
+          maxWidth: "310",
+          enableSorting: true,
+        },
+      ],
+    },
+  };
+  const clientId = import.meta.env.VITE_FRONTEND_CLIENT_ID;
+  const tenantId = import.meta.env.VITE_FRONTEND_TENANT_ID || "organizations";
+  const dataverseEnv = import.meta.env.VITE_FRONTEND_DATAVERSE_ENV;
+  const authService = new Msal2AuthenticationService(
+    { clientId: clientId, tenantId: tenantId },
+    false
+  );
+  const [site, setSite] = React.useState<IEntityWithIdAndDisplayName>();
   return (
-    <AuthenticationContextProvider authProvider={authService} >
+    <AuthenticationContextProvider authProvider={authService}>
       <GraphContextProvider>
-        <SPContextProvider siteUrl={import.meta.env.VITE_SITE_URL} >
+        <SPContextProvider siteUrl={import.meta.env.VITE_SITE_URL}>
           <>
-            <M365Search dataProviderProps={{
+            {/* <M365Search dataProviderProps={{
               queryTemplate: "{searchTerms} ", //AND (contentclass:STS_ListItem OR IsDocument:True) -FileType:aspx
               aggregations: [{
                 field: "FileType",
@@ -239,7 +261,7 @@ function App() {
             <SitePicker onEntitySelected={(site) => setSite(site[0])} label="Site picker" description="Pick a site " />
             {site && <ListPickerPicker siteId={site.id} label="List picker" description={`Pick a list from ${site.displayName}`} />}
             {/* <GetSiteTemplateContext /> */}
-            <SPPermissionTrimmedComponent role={"editListItems"}>
+            {/* <SPPermissionTrimmedComponent role={"editListItems"}>
               <Text>Test SP</Text>
             </SPPermissionTrimmedComponent>
             <GraphGroupMembershipTrimmedComponent groupId="71a8d60d-7a8c-4ab2-b27b-00416367cc0d" placeholder={<Spinner />} >
@@ -247,12 +269,118 @@ function App() {
             </GraphGroupMembershipTrimmedComponent>
             <M365CopilotSearch dataProviderProps={{
               queryTemplate: "SiteId:4ab2b7d6-0079-4ef7-92d2-0ee8948fd864"
-            }} />
+            }} /> */}
           </>
+          <SPListDataGrid
+            listId="a8dd0add-5556-4a96-8dae-51d56fa374d6"
+            fieldsToRender={[{
+              name: "ID",
+              type: "Number"
+            }, {
+              name: "Title",
+              type: "Text"
+            }, {
+              name: "Created",
+              type: "DateTime"
+            }, {
+              name: "Author",
+              type: "User"
+            }]}
+          />
+          <GraphEntityDataGrid
+            entityEndpoint="https://graph.microsoft.com/beta/applications"
+            fieldsToRender={[
+              {
+                name: "id",
+                label: "Identifier",
+                disableSorting: true
+              },
+              {
+                name: "displayName",
+                label: "Full name",
+                disableSorting: true
+              },
+              {
+                name: "description",
+                label: "Description",
+                disableSorting: true
+              },
+              {
+                name: "identifierUris",
+                label: "App Id Uri",
+                disableSorting: true
+              },
+            ]}
+            customRenderers={[{
+              isRendererApplicable: (field) => field.name === "identifierUris",
+              renderField: (field, value, item) => <Text >{value ? value[0] : ""}</Text>
+            }]}
+          />
+          <DataverseContextProvider dataverseResource={dataverseEnv} autoBatch>
+            <DataverseTableGrid
+              tableName="crc82_opportunities"
+              fieldsToRender={[
+                {
+                  name: "crc82_opportunityname",
+                  label: "Name"
+                },
+                {
+                  name: "crc82_opportunityid",
+                  label: "Id"
+                },
+                {
+                  name: "crc82_amount",
+                  label: "Amount",
+                  type: "Number"
+                },
+                {
+                  name: "crc82_account_table_0id",
+                  type: "Lookup",
+                  expandFields: [
+                    "crc82_accountname",
+                    "crc82_accountid",
+                  ],
+                  relatedId: "crc82_accountid",
+                  label: "Account"
+                },
+                {
+                  name: "crc82_contact_table_0id",
+                  type: "Lookup",
+                  expandFields: [
+                    "crc82_contactname",
+                    "crc82_contactid",
+                    "crc82_email"
+                  ],
+                  relatedId: "crc82_contactid",
+                  label: "Contact"
+                },
+                {
+                  name: "createdby",
+                  type: "User",
+                  expandFields: [
+                    "fullname",
+                    "systemuserid",
+                    "azureactivedirectoryobjectid",
+                  ],
+                  relatedId: "systemuserid",
+                  label: "Created By"
+                },
+                {
+                  name: "createdon",
+                  type: "DateTime",
+                  label: "Created date"
+                },
+              ]}
+              customRenderers={[{
+                isRendererApplicable: (field) => field.name === "crc82_contact_table_0id",
+                renderField: (field, value, item) => <Link href={`mailto:${value["crc82_email"]}`}>{value["crc82_contactname"]}</Link>
+              }]}
+            />
+          </DataverseContextProvider>
         </SPContextProvider>
       </GraphContextProvider>
     </AuthenticationContextProvider>
-  )
+  );
 }
 
-export default App
+export default App;
