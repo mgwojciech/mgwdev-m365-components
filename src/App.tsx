@@ -254,12 +254,12 @@ function App() {
               }]
             }}
               searchInputComponent={(props) => <SearchInputWithSuggestions onSearch={props.onSearch} query="" />}
-            />
-            <PeoplePicker key="people-picker" label="People picker" description="Pick some people here" />
+            /> */}
+            {/* <PeoplePicker key="people-picker" label="People picker" description="Pick some people here" />
             <TeamPicker key="team-picker" label="Team picker" description="Pick a team here" />
             <DrivePicker key="drive-picker" label="Drive picker" description="Pick a drive here" />
-            <SitePicker onEntitySelected={(site) => setSite(site[0])} label="Site picker" description="Pick a site " />
-            {site && <ListPickerPicker siteId={site.id} label="List picker" description={`Pick a list from ${site.displayName}`} />}
+            <SitePicker onEntitySelected={(site) => setSite(site[0])} label="Site picker" description="Pick a site " /> */}
+            {/* {site && <ListPickerPicker siteId={site.id} label="List picker" description={`Pick a list from ${site.displayName}`} />} */}
             {/* <GetSiteTemplateContext /> */}
             {/* <SPPermissionTrimmedComponent role={"editListItems"}>
               <Text>Test SP</Text>

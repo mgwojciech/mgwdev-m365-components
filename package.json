@@ -1,7 +1,7 @@
 {
   "name": "mgwdev-m365-components",
   "private": false,
-  "version": "0.0.9",
+  "version": "0.0.10-experimental",
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
@@ -58,13 +58,14 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/mwdev-m365-components.umd.js",
-  "module": "./dist/mwdev-m365-components.es.js",
+  "main": "./dist/mgwdev-m365-components.umd.js",
+  "module": "./dist/mgwdev-m365-components.es.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/mwdev-m365-components.es.js",
-      "require": "./dist/mwdev-m365-components.umd.js"
+      "import": "./dist/mgwdev-m365-components.es.js",
+      "require": "./dist/mgwdev-m365-components.umd.js",
+      "types": "./dist/index.d.ts"
     }
   }
 }

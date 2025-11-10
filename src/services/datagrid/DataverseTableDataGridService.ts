@@ -131,7 +131,8 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
       query += `$apply=groupby((${field.name}/${
         field.relatedId || field.name + "_id"
       },${field.name}/${field.expandFields[0]}))`;
-    } else if (field.type == "User") {
+      //@ts-ignore
+    } else if (field.type === "User") {
       query += `$apply=groupby((${field.name}/fullname))`;
     } else if (field.type == "DateTime") {
       query += `$apply=aggregate(${field.name} with min as ${field.name})`;
@@ -144,6 +145,7 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
       },
     });
     const results = await response.json();
+      //@ts-ignore
     if (field.type === "Lookup" || field.type === "User") {
       if (results.value.length === 0) {
         return [];

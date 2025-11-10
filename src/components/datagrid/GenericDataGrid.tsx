@@ -127,6 +127,7 @@ export function GenericDataGrid<T>(props: IGenericDataGridProps<T>) {
       {props.renderFilter && (
         <DataGridFilterPanel
           filterFields={props.fieldsToRender}
+          initialQueryFields={filters}
           onFilterSet={(field: DataField, queryFields: IQueryField[]) => {
             const newFilters = [
               ...filters.filter((f) => f.name !== field.name),

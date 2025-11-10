@@ -3,6 +3,7 @@ import * as React from "react";
 import { DataField } from "../../../model/DataField";
 import { IEntityWithIdAndDisplayName } from "../../../model/IEntityWithIdAndDisplayName";
 import { AbstractGraphEntityPicker, IAbstractGraphEntityPickerProps } from "../../common";
+import { simpleHash } from "../../../utils";
 
 export interface ISPFieldFilterComboboxProps
     extends Partial<IAbstractGraphEntityPickerProps<IEntityWithIdAndDisplayName>> {
@@ -16,6 +17,7 @@ export interface ISPFieldFilterComboboxProps
 }
 
 export function SPFieldFilterCombobox(props: ISPFieldFilterComboboxProps) {
+
     const getColumnValues = async (searchText?: string) => {
         const filters = [];
         if (props.additionalFilters) {
@@ -34,7 +36,7 @@ export function SPFieldFilterCombobox(props: ISPFieldFilterComboboxProps) {
 
     return (
         <AbstractGraphEntityPicker<IEntityWithIdAndDisplayName>
-            additionalKey={`${props.listId}-${props.column.name}`}
+            additionalKey={`${props.listId}-${props.column.name}-${simpleHash(props.additionalFilters ? props.additionalFilters.map(f=>f.name + f.value).join(";") : "")}`}
             {...props}
             onDataRequested={getColumnValues}
         />

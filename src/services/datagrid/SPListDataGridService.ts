@@ -38,19 +38,37 @@ export class SPListDataGridService<T> implements IDataGridService<T> {
         field: DataField,
         existingFilters?: IQueryField[]
     ): Promise<IEntityWithIdAndDisplayName[]> => {
-        const suggestionsProvider = new SPListItemCamlPagedDataProvider<T>(this.spHttpClient, this.siteUrl, this.listId, [field.name]);
-        suggestionsProvider.pageSize = 10;
+        let apiUri = `${this.siteUrl}/_api/web/lists('${this.listId}')/RenderListFilterData?FieldInternalName='${field.name}'`;
         if (existingFilters && existingFilters.length > 0) {
-            const queryBuilder = new CamlQueryBuilder();
-            existingFilters.forEach(fld => queryBuilder.withFieldQuery(fld));
-            this.dataProvider.setQuery(queryBuilder.build());
-            suggestionsProvider.setQuery(queryBuilder.build());
+            let filterQuery = "";
+            for (let i = 0; i < existingFilters.length; i++) {
+                const fld = existingFilters[i];
+                const fldNumber = i + 1;
+                filterQuery += `&FilterField${fldNumber}=${fld.name}&FilterValue${fldNumber}=${encodeURIComponent(fld.value)}&FilterType${fldNumber}=${fld.type || "Text"}`
+            }
+            apiUri += filterQuery;
         }
-        const result = await suggestionsProvider.getData();
-        return result.map(r => ({
-            id: field.type === "User" ? r[field.name][0]?.id : r[field.name],
-            displayName: field.type === "User" ? r[field.name][0]?.title : r[field.name]
-        }))
+        const suggestionsResponse = await this.spHttpClient.post(apiUri, {
+            headers: {
+                accept: "application/json"
+            }
+        });
+        //whatever You do the response is always in xml....soo
+        const parser = new DOMParser();
+        const text = await suggestionsResponse.text();
+        //sanitaze SELECTED attribute
+        const xmlDoc = parser.parseFromString(text?.replace("SELECTED", ""), "application/xml")
+
+        const options = xmlDoc.getElementsByTagName("OPTION");
+        const result = [];
+        for (let i = 0; i < options.length; i++) {
+            const option = options.item(i);
+            result.push({
+                id: option.getAttribute("Value"),
+                displayName: option.innerHTML
+            })
+        }
+        return result;
     }
 
 }
