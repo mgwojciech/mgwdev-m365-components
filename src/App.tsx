@@ -271,7 +271,7 @@ function App() {
               queryTemplate: "SiteId:4ab2b7d6-0079-4ef7-92d2-0ee8948fd864"
             }} /> */}
           </>
-          <SPListDataGrid
+          {/* <SPListDataGrid
             listId="a8dd0add-5556-4a96-8dae-51d56fa374d6"
             fieldsToRender={[{
               name: "ID",
@@ -286,8 +286,8 @@ function App() {
               name: "Author",
               type: "User"
             }]}
-          />
-          <GraphEntityDataGrid
+          /> */}
+          {/* <GraphEntityDataGrid
             entityEndpoint="https://graph.microsoft.com/beta/applications"
             fieldsToRender={[
               {
@@ -315,8 +315,8 @@ function App() {
               isRendererApplicable: (field) => field.name === "identifierUris",
               renderField: (field, value, item) => <Text >{value ? value[0] : ""}</Text>
             }]}
-          />
-          <DataverseContextProvider dataverseResource={dataverseEnv} autoBatch>
+          /> */}
+          <DataverseContextProvider dataverseResource={dataverseEnv}>
             <DataverseTableGrid
               tableName="crc82_opportunities"
               fieldsToRender={[

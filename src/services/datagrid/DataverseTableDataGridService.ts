@@ -1,10 +1,10 @@
 import {
+  DataversePagedDataProvider,
   DataverseQueryBuilder,
   IHttpClient,
   IQueryField,
   ODataPagedDataProvider,
 } from "mgwdev-m365-helpers";
-import { ODataQueryBuilder } from "mgwdev-m365-helpers/lib/utils/queryBuilders/ODataQueryBuilder";
 import { DataField } from "../../model/DataField";
 import { IDataGridService } from "./DataGridService";
 import { IEntityWithIdAndDisplayName } from "../../model/IEntityWithIdAndDisplayName";
@@ -17,11 +17,12 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
     protected dataverseEnv: string,
     protected tableName: string
   ) {
-    this.dataProvider = new ODataPagedDataProvider<T>(
+    this.dataProvider = new DataversePagedDataProvider<T>(
       dataverseClient,
-      `${dataverseEnv}/api/data/v9.0/${tableName}`,
-      true
+      dataverseEnv,
+      tableName
     );
+    this.dataProvider.pageSize = 5
   }
 
   private mapToExpand(field: DataField): string {
@@ -128,9 +129,8 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
       query += `$filter=${queryBuilder.build()}&`;
     }
     if (field.type === "Lookup") {
-      query += `$apply=groupby((${field.name}/${
-        field.relatedId || field.name + "_id"
-      },${field.name}/${field.expandFields[0]}))`;
+      query += `$apply=groupby((${field.name}/${field.relatedId || field.name + "_id"
+        },${field.name}/${field.expandFields[0]}))`;
       //@ts-ignore
     } else if (field.type === "User") {
       query += `$apply=groupby((${field.name}/fullname))`;
@@ -145,7 +145,7 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
       },
     });
     const results = await response.json();
-      //@ts-ignore
+    //@ts-ignore
     if (field.type === "Lookup" || field.type === "User") {
       if (results.value.length === 0) {
         return [];
