@@ -50,7 +50,7 @@ export function AbstractGraphEntityPicker<T extends IEntityWithIdAndDisplayName>
 
     React.useEffect(() => {
         loadEntities(inputValue);
-    }, [inputValue])
+    }, [inputValue, props.additionalKey])
     
     if (props.renderOverride) {
         return <>{props.renderOverride(entities, isLoading, loadEntities)}</>;

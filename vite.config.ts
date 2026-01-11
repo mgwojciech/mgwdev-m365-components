@@ -17,9 +17,9 @@ export default defineConfig({
     build: {
         lib: {
             entry: path.resolve(__dirname, 'src/index.tsx'),
-            name: 'mwdev-m365-components',
+            name: 'mgwdev-m365-components',
             formats: ['es', 'umd'],
-            fileName: (format) => `mwdev-m365-components.${format}.js`,
+            fileName: (format) => `mgwdev-m365-components.${format}.js`,
         },
         rollupOptions: {
             external: ['react', 'react-dom'],
