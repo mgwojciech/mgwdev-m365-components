@@ -6,5 +6,6 @@ export type DataField = {
   type?: IQueryFieldType;
   expandFields?: string[];
   relatedId?: string;
-  disableSorting?: boolean
+  disableSorting?: boolean;
+  disableFiltering?: boolean;
 };

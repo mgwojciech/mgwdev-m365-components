@@ -10,10 +10,20 @@ export class DataverseUserRenderer implements IColumnRenderer {
     return field.type === "User";
   }
   public renderField(field: DataField, value: unknown, item: unknown): React.ReactElement {
+    if (!value || typeof value !== "object") {
+      return <span>-</span>;
+    }
+    const userValue = value as Record<string, unknown>;
+    const userId = userValue["azureactivedirectoryobjectid"];
+    if (!userId) {
+      // Fallback to fullname if no AAD object ID
+      const fullname = userValue["fullname"];
+      return <span>{fullname ? String(fullname) : "-"}</span>;
+    }
     return (
       <GraphPersonaStandalone
         graphClient={this.graphClient}
-        id={value["azureactivedirectoryobjectid"]}
+        id={String(userId)}
       />
     );
   }

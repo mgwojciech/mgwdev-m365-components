@@ -3,9 +3,10 @@ import { DataField } from "../../model/DataField";
 import { IColumnRenderer } from "./columnRenderers/IColumnRenderer";
 import { useDataverse, useGraph } from "../../context";
 import { DataverseTableDataGridService } from "../../services/datagrid/DataverseTableDataGridService";
-import { GenericDataGrid } from "./GenericDataGrid";
+import { DataGridSelectionMode, GenericDataGrid } from "./GenericDataGrid";
 import { DataverseUserRenderer } from "./columnRenderers/DataverseUserRenderer";
 import { DataverseLookupRenderer } from "./columnRenderers/DataverseLookupRenderer";
+import { DateRenderer } from "./columnRenderers/DateRenderer";
 import { DataverseColumnFilterCombobox } from "./filterComponents/DataverseColumnFilterCombobox";
 import { IHttpClient, IQueryField } from "mgwdev-m365-helpers";
 
@@ -13,15 +14,33 @@ export interface IDataverseTableDataGridProps<T> {
   tableName: string;
   fieldsToRender: DataField[];
   customRenderers?: IColumnRenderer[];
+  selectionMode?: DataGridSelectionMode;
+  getRowId?: (item: T) => string;
+  onSelectionChange?: (selectedItems: T[]) => void;
 }
 
 export function DataverseTableGrid<T>(props: IDataverseTableDataGridProps<T>) {
   const { dataverseClient, dataverseResource } = useDataverse();
   const { graphClient } = useGraph();
-  return <DataverseTableGridStandalone {...props} dataverseClient={dataverseClient} dataverseEnv={dataverseResource} customRenderers={[
-    new DataverseUserRenderer(graphClient),
-    ...props.customRenderers
-  ]} />
+  
+  const renderers = React.useMemo(() => {
+    const temp: IColumnRenderer[] = [
+      new DataverseUserRenderer(graphClient),
+    ];
+    if (props.customRenderers) {
+      temp.push(...props.customRenderers);
+    }
+    return temp;
+  }, [graphClient, props.customRenderers]);
+
+  return (
+    <DataverseTableGridStandalone
+      {...props}
+      dataverseClient={dataverseClient}
+      dataverseEnv={dataverseResource}
+      customRenderers={renderers}
+    />
+  );
 }
 
 
@@ -30,10 +49,10 @@ export function DataverseTableGridStandalone<T>(props: IDataverseTableDataGridPr
   dataverseEnv: string
 }) {
   const renderers = React.useMemo(() => {
-    let temp = [];
-    temp.push(
-      new DataverseLookupRenderer()
-    );
+    let temp: IColumnRenderer[] = [
+      new DataverseLookupRenderer(),
+      new DateRenderer(),
+    ];
     if (props.customRenderers) {
       temp.push(...props.customRenderers);
     }
@@ -46,7 +65,7 @@ export function DataverseTableGridStandalone<T>(props: IDataverseTableDataGridPr
         props.dataverseEnv,
         props.tableName
       ),
-    [props.tableName]
+    [props.dataverseClient, props.dataverseEnv, props.tableName]
   );
 
   return (
@@ -54,6 +73,9 @@ export function DataverseTableGridStandalone<T>(props: IDataverseTableDataGridPr
       dataService={dataGridService}
       fieldsToRender={props.fieldsToRender}
       customRenderers={renderers}
+      selectionMode={props.selectionMode}
+      getRowId={props.getRowId}
+      onSelectionChange={props.onSelectionChange}
       renderFilter={(field, onFilterSet, initialQuery) => <DataverseColumnFilterCombobox additionalFilters={initialQuery} onEntitySelected={(entities) => {
         if (entities) {
           const filters: IQueryField[] = entities.map(en => ({

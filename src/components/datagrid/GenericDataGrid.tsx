@@ -14,7 +14,12 @@ import {
   DataGridProps,
   DataGridRow,
   makeStyles,
+  MessageBar,
+  MessageBarBody,
+  MessageBarTitle,
+  SelectionItemId,
   Spinner,
+  TableRowId,
   Text,
   tokens,
 } from "@fluentui/react-components";
@@ -25,11 +30,16 @@ import {
 import { DataGridFilterPanel } from "./DataGridFilterPanel";
 import { IQueryField } from "mgwdev-m365-helpers";
 
+export type DataGridSelectionMode = "single" | "multiselect";
+
 export interface IGenericDataGridProps<T> {
   dataService: IDataGridService<T>;
   fieldsToRender: DataField[];
   customRenderers?: IColumnRenderer[];
   systemFilter?: IQueryField[];
+  selectionMode?: DataGridSelectionMode;
+  getRowId?: (item: T) => string;
+  onSelectionChange?: (selectedItems: T[]) => void;
   renderFilter?: (
     field: DataField,
     onFilterSet: (field: DataField, queryFields: IQueryField[]) => void,
@@ -49,6 +59,9 @@ const useGenericDataGridStyles = makeStyles({
     paddingBottom: tokens.spacingHorizontalM,
     backgroundColor: tokens.colorNeutralBackgroundAlpha,
     zIndex: 9999,
+  },
+  errorWrapper: {
+    marginBottom: tokens.spacingVerticalM,
   },
   pagination: {
     display: "flex",
@@ -95,10 +108,64 @@ export function GenericDataGrid<T>(props: IGenericDataGridProps<T>) {
 
   const [items, setItems] = React.useState<T[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
   const [filters, setFilters] = React.useState<IQueryField[]>([]);
+  const [selectedRows, setSelectedRows] = React.useState<Set<SelectionItemId>>(
+    new Set()
+  );
+
+  const getRowIdForItem = React.useCallback(
+    (item: T, index: number): TableRowId => {
+      if (props.getRowId) {
+        return props.getRowId(item);
+      }
+      // Fallback: try common id properties
+      const itemAny = item as Record<string, unknown>;
+      if (itemAny["id"]) return String(itemAny["id"]);
+      if (itemAny["Id"]) return String(itemAny["Id"]);
+      if (itemAny["ID"]) return String(itemAny["ID"]);
+      return index;
+    },
+    [props.getRowId]
+  );
+
+  const itemsByRowId = React.useMemo(() => {
+    const map = new Map<TableRowId, T>();
+    items.forEach((item, index) => {
+      map.set(getRowIdForItem(item, index), item);
+    });
+    return map;
+  }, [items, getRowIdForItem]);
+
+  const onSelectionChange: DataGridProps["onSelectionChange"] = (
+    e,
+    data
+  ) => {
+    setSelectedRows(data.selectedItems);
+    if (props.onSelectionChange) {
+      const selectedItems: T[] = [];
+      data.selectedItems.forEach((id) => {
+        const item = itemsByRowId.get(id);
+        if (item) {
+          selectedItems.push(item);
+        }
+      });
+      props.onSelectionChange(selectedItems);
+    }
+  };
+
+  const filterableFields = React.useMemo(
+    () => props.fieldsToRender.filter((f) => !f.disableFiltering),
+    [props.fieldsToRender]
+  );
+
+  const clearFilters = React.useCallback(() => {
+    setFilters([]);
+  }, []);
 
   React.useEffect(() => {
     setLoading(true);
+    setError(null);
     props.dataService.setFields(props.fieldsToRender);
     const queryFilters: IQueryField[] = [];
     if (props.systemFilter && props.systemFilter.length > 0) {
@@ -114,6 +181,10 @@ export function GenericDataGrid<T>(props: IGenericDataGridProps<T>) {
         sortState?.sortDirection == "ascending" ? "ASC" : "DESC"
       )
       .then((d) => setItems(d))
+      .catch((err) => {
+        setError(err?.message || "An error occurred while loading data");
+        setItems([]);
+      })
       .finally(() => setLoading(false));
   }, [props.systemFilter, sortState, filters]);
 
@@ -124,9 +195,19 @@ export function GenericDataGrid<T>(props: IGenericDataGridProps<T>) {
           <Spinner size="huge" />
         </div>
       )}
+      {error && (
+        <div className={classNames.errorWrapper}>
+          <MessageBar intent="error">
+            <MessageBarBody>
+              <MessageBarTitle>Error</MessageBarTitle>
+              {error}
+            </MessageBarBody>
+          </MessageBar>
+        </div>
+      )}
       {props.renderFilter && (
         <DataGridFilterPanel
-          filterFields={props.fieldsToRender}
+          filterFields={filterableFields}
           initialQueryFields={filters}
           onFilterSet={(field: DataField, queryFields: IQueryField[]) => {
             const newFilters = [
@@ -137,6 +218,7 @@ export function GenericDataGrid<T>(props: IGenericDataGridProps<T>) {
             }
             setFilters(newFilters);
           }}
+          onClearFilters={clearFilters}
           renderFilter={props.renderFilter}
         />
       )}
@@ -146,9 +228,19 @@ export function GenericDataGrid<T>(props: IGenericDataGridProps<T>) {
         sortable
         sortState={sortState}
         onSortChange={onSortChange}
+        selectionMode={props.selectionMode}
+        selectedItems={selectedRows}
+        onSelectionChange={onSelectionChange}
+        getRowId={(item) => getRowIdForItem(item, items.indexOf(item))}
       >
         <DataGridHeader>
-          <DataGridRow>
+          <DataGridRow
+            selectionCell={
+              props.selectionMode === "multiselect"
+                ? { checkboxIndicator: { "aria-label": "Select all rows" } }
+                : undefined
+            }
+          >
             {({ renderHeaderCell }) => (
               <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>
             )}
@@ -156,7 +248,17 @@ export function GenericDataGrid<T>(props: IGenericDataGridProps<T>) {
         </DataGridHeader>
         <DataGridBody<T>>
           {({ item, rowId }) => (
-            <DataGridRow<T> key={rowId}>
+            <DataGridRow<T>
+              key={rowId}
+              selectionCell={
+                props.selectionMode
+                  ? {
+                      checkboxIndicator: { "aria-label": "Select row" },
+                      radioIndicator: { "aria-label": "Select row" },
+                    }
+                  : undefined
+              }
+            >
               {({ renderCell }) => (
                 <DataGridCell>{renderCell(item)}</DataGridCell>
               )}
@@ -175,6 +277,7 @@ export function GenericDataGrid<T>(props: IGenericDataGridProps<T>) {
               .finally(() => setLoading(false));
           }}
           aria-label="Previous page"
+          data-testid="datagrid-prev-page"
         >
           
         </Button>
@@ -188,6 +291,7 @@ export function GenericDataGrid<T>(props: IGenericDataGridProps<T>) {
               .finally(() => setLoading(false));
           }}
           aria-label="Next page"
+          data-testid="datagrid-next-page"
         >
         </Button>
       </div>

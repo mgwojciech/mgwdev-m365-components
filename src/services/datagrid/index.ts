@@ -1,3 +1,4 @@
+export * from "./DataGridService";
 export * from "./DataverseTableDataGridService";
-export * from "./SPListDataGridService";
+export * from "./GraphEntityDataGridService";
 export * from "./SPListDataGridService";

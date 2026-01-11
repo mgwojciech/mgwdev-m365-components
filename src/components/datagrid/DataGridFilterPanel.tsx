@@ -2,10 +2,12 @@ import {
   Button,
   Drawer,
   DrawerBody,
+  DrawerFooter,
   DrawerHeader,
   DrawerHeaderTitle,
   Field,
   makeStyles,
+  tokens,
 } from "@fluentui/react-components";
 import { Dismiss24Regular, FilterRegular } from "@fluentui/react-icons";
 import * as React from "react";
@@ -21,24 +23,42 @@ export interface IDataGridFilterPanelProps {
   filterFields: DataField[];
   initialQueryFields?: IQueryField[];
   onFilterSet: (field: DataField, queryFields: IQueryField[]) => void;
+  onClearFilters?: () => void;
 }
 
 const useDataGridFilterPanelStyles = makeStyles({
   root: {
     display: "flex",
-    justifyContent: "end"
+    justifyContent: "end",
+    gap: tokens.spacingHorizontalS,
   },
   button: {},
+  activeFilterButton: {
+    backgroundColor: tokens.colorBrandBackground,
+    color: tokens.colorNeutralForegroundOnBrand,
+  },
 });
 
 export function DataGridFilterPanel(props: IDataGridFilterPanelProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const classNames = useDataGridFilterPanelStyles();
+  const hasActiveFilters = props.initialQueryFields && props.initialQueryFields.length > 0;
+  
   return (
     <div className={classNames.root}>
+      {hasActiveFilters && props.onClearFilters && (
+        <Button
+          aria-label="Clear all filters"
+          appearance="subtle"
+          onClick={props.onClearFilters}
+        >
+          Clear filters
+        </Button>
+      )}
       <Button
         aria-label="Open filter pane"
         icon={<FilterRegular />}
+        className={hasActiveFilters ? classNames.activeFilterButton : undefined}
         onClick={() => {
           setIsOpen(true);
         }}
@@ -75,6 +95,19 @@ export function DataGridFilterPanel(props: IDataGridFilterPanelProps) {
             </Field>
           ))}
         </DrawerBody>
+        {hasActiveFilters && props.onClearFilters && (
+          <DrawerFooter>
+            <Button
+              appearance="secondary"
+              onClick={() => {
+                props.onClearFilters?.();
+                setIsOpen(false);
+              }}
+            >
+              Clear all filters
+            </Button>
+          </DrawerFooter>
+        )}
       </Drawer>
     </div>
   );

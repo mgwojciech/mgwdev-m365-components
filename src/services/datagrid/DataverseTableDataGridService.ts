@@ -131,9 +131,6 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
     if (field.type === "Lookup") {
       query += `$apply=groupby((${field.name}/${field.relatedId || field.name + "_id"
         },${field.name}/${field.expandFields[0]}))`;
-      //@ts-ignore
-    } else if (field.type === "User") {
-      query += `$apply=groupby((${field.name}/fullname))`;
     } else if (field.type == "DateTime") {
       query += `$apply=aggregate(${field.name} with min as ${field.name})`;
     } else {
