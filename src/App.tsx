@@ -23,6 +23,7 @@ import { SearchInputWithSuggestions } from "./components/search/SearchInputWithS
 import { DataverseTableGrid } from "./components/datagrid/DataverseTableDataGrid";
 import { GraphEntityDataGrid } from "./components/datagrid/GraphEntityDataGrid";
 import { SPListDataGrid } from "./components/datagrid/SPListDataGrid";
+import { CopilotChat } from "./components/CopilotChat";
 
 function App() {
   const pnpSearchWPConfig = {
@@ -271,7 +272,7 @@ function App() {
               queryTemplate: "SiteId:4ab2b7d6-0079-4ef7-92d2-0ee8948fd864"
             }} /> */}
           </>
-          <SPListDataGrid
+          {/* <SPListDataGrid
             selectionMode="single"
             getRowId={(item)=>item["ID"]}
             listId="a8dd0add-5556-4a96-8dae-51d56fa374d6"
@@ -291,7 +292,7 @@ function App() {
             onSelectionChange={(items)=>{
               console.log(items);
             }}
-          />
+          /> */}
           {/* <GraphEntityDataGrid
             entityEndpoint="https://graph.microsoft.com/beta/applications"
             fieldsToRender={[
@@ -321,7 +322,7 @@ function App() {
               renderField: (field, value, item) => <Text >{value ? value[0] : ""}</Text>
             }]}
           /> */}
-          <DataverseContextProvider dataverseResource={dataverseEnv}>
+          {/* <DataverseContextProvider dataverseResource={dataverseEnv}>
             <DataverseTableGrid
               tableName="crc82_opportunities"
               fieldsToRender={[
@@ -381,7 +382,8 @@ function App() {
                 renderField: (field, value, item) => <Link href={`mailto:${value["crc82_email"]}`}>{value["crc82_contactname"]}</Link>
               }]}
             />
-          </DataverseContextProvider>
+          </DataverseContextProvider> */}
+          <CopilotChat />
         </SPContextProvider>
       </GraphContextProvider>
     </AuthenticationContextProvider>
