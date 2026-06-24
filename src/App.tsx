@@ -6,7 +6,7 @@ import {
   SPContextProvider,
 } from "./context";
 import { Test } from "./components/Test";
-import { M365Search, SPPermissionTrimmedComponent } from "./components";
+import { GraphPersona, M365Search, SPPermissionTrimmedComponent } from "./components";
 import {
   DrivePicker,
   PeoplePicker,
@@ -223,15 +223,18 @@ function App() {
   const clientId = import.meta.env.VITE_FRONTEND_CLIENT_ID;
   const tenantId = import.meta.env.VITE_FRONTEND_TENANT_ID || "organizations";
   const dataverseEnv = import.meta.env.VITE_FRONTEND_DATAVERSE_ENV;
+  
   const authService = new Msal2AuthenticationService(
-    { clientId: clientId, tenantId: tenantId },
+    { clientId: clientId, tenantId: tenantId, redirectUri: `${window.location.origin}/redirect` },
     false
   );
   const [site, setSite] = React.useState<IEntityWithIdAndDisplayName>();
+
   return (
     <AuthenticationContextProvider authProvider={authService}>
       <GraphContextProvider>
-        <SPContextProvider siteUrl={import.meta.env.VITE_SITE_URL}>
+        <SPContextProvider siteUrl={import.meta.env.VITE_FRONTEND_SITE_URL}>
+          <GraphPersona />
           <>
             {/* <M365Search dataProviderProps={{
               queryTemplate: "{searchTerms} ", //AND (contentclass:STS_ListItem OR IsDocument:True) -FileType:aspx

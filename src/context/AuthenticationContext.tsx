@@ -11,7 +11,10 @@ export interface IAuthenticationContextProviderProps extends React.PropsWithChil
 
 export const AuthenticationContext = React.createContext<IAuthenticationContextProps>({
     authProvider: {
-        getAccessToken: async () => { throw new Error("No auth provider available") }
+        getAccessToken: async () => { throw new Error("No auth provider available") },
+        isAuthenticated: async () => { return false },
+        clearCache: async () => { throw new Error("No auth provider available") },
+        logout: async () => { throw new Error("No auth provider available") },
     }
 });
 
