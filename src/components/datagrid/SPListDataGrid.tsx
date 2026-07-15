@@ -14,6 +14,7 @@ export interface ISPListDataGridProps<T> {
     fieldsToRender: DataField[];
     customRenderers?: IColumnRenderer[];
     selectionMode?: DataGridSelectionMode;
+    rowLimit?: number;
     getRowId?: (item: T) => string;
     onSelectionChange?: (selectedItems: T[]) => void;
 }
@@ -41,7 +42,8 @@ export function SPListDataGridStandalone<T>(props: ISPListDataGridProps<T> & { s
             new SPListDataGridService<T>(
                 props.spClient,
                 props.siteUrl,
-                props.listId
+                props.listId,
+                props.rowLimit
             ),
         [props.spClient, props.listId, props.siteUrl]
     );
@@ -50,6 +52,7 @@ export function SPListDataGridStandalone<T>(props: ISPListDataGridProps<T> & { s
           fieldsToRender={props.fieldsToRender}
           customRenderers={renderers}
           selectionMode={props.selectionMode}
+          rowLimit={props.rowLimit}
           getRowId={props.getRowId}
           onSelectionChange={props.onSelectionChange}
           renderFilter={(field, onFilterSet, initialQuery) => <SPFieldFilterCombobox additionalFilters={initialQuery} onEntitySelected={(entities) => {

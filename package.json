@@ -1,7 +1,7 @@
 {
   "name": "mgwdev-m365-components",
   "private": false,
-  "version": "0.0.13-experimental",
+  "version": "0.0.15",
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
@@ -20,22 +20,23 @@
   "license": "MIT",
   "dependencies": {
     "@azure/msal-browser": "^5.9.0",
-    "@fluentui/react-components": "^9.68.3",
     "@testing-library/react": "^16.2.0",
     "handlebars": "^4.7.8",
     "handlebars-group-by": "^1.0.1",
     "handlebars-helpers": "^0.10.0",
     "jspath": "^0.4.0",
-    "mgwdev-m365-helpers": "^0.3.3",
+    "mgwdev-m365-helpers": "^0.3.4",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
     "vite-plugin-dts": "^3.6.4"
   },
   "peerDependencies": {
+    "@fluentui/react-components": "^9.74.3",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0"
   },
   "devDependencies": {
+    "@fluentui/react-components": "^9.74.3",
     "@microsoft/rush-stack-compiler-4.7": "^0.1.0",
     "@microsoft/sp-build-web": "^1.21.1",
     "@testing-library/jest-dom": "^6.6.3",

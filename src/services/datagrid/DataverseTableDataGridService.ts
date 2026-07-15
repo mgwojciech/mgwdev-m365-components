@@ -9,6 +9,10 @@ import { DataField } from "../../model/DataField";
 import { IDataGridService } from "./DataGridService";
 import { IEntityWithIdAndDisplayName } from "../../model/IEntityWithIdAndDisplayName";
 
+export interface IQueryFieldWithJoinBy extends IQueryField {
+  joinBy?: "And" | "Or";
+}
+
 export class DataverseTableDataGridService<T> implements IDataGridService<T> {
   protected dataProvider: ODataPagedDataProvider<T>;
   protected dataFields: DataField[] = [];
@@ -22,7 +26,10 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
       dataverseEnv,
       tableName
     );
-    this.dataProvider.pageSize = 5
+    this.dataProvider.pageSize = 25
+  }
+  public getTotalRows(): number {
+    return this.dataProvider.allItemsCount;
   }
 
   private mapToExpand(field: DataField): string {
@@ -44,7 +51,7 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
     this.dataFields = fields;
   }
   public getData(
-    queryFields?: IQueryField[],
+    queryFields?: IQueryFieldWithJoinBy[],
     orderBy?: string,
     orderDir?: "ASC" | "DESC"
   ) {
@@ -54,7 +61,7 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
         if (!fld.type) {
           fld.type = "Text";
         }
-        queryBuilder.withFieldQuery(fld);
+        queryBuilder.withFieldQuery(fld, fld.joinBy || "And");
       }
 
       const query = queryBuilder.build();
@@ -90,7 +97,7 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
   }
   public getFieldSuggestions = async (
     field: DataField,
-    existingFilters?: IQueryField[]
+    existingFilters?: IQueryFieldWithJoinBy[]
   ): Promise<IEntityWithIdAndDisplayName[]> => {
     if (field.type === "User") {
       let query = `${this.dataverseEnv}/api/data/v9.0/systemusers?`;
@@ -124,7 +131,7 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
         if (!fld.type) {
           fld.type = "Text";
         }
-        queryBuilder.withFieldQuery(fld);
+        queryBuilder.withFieldQuery(fld, fld.joinBy || "And");
       }
       query += `$filter=${queryBuilder.build()}&`;
     }
