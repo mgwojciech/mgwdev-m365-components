@@ -20,7 +20,7 @@ import {
     Sparkle24Filled,
     ErrorCircle24Regular
 } from "@fluentui/react-icons";
-import { BatchGraphClient, CopilotChatService, ICopilotConversationResponse, ICopilotResponseMessage } from "mgwdev-m365-helpers";
+import { AuthHttpClient, BatchGraphClient, CopilotChatService, FetchHttpClient, ICopilotConversationResponse, ICopilotResponseMessage, WorkIQChatService } from "mgwdev-m365-helpers";
 import { GraphPersona } from "./common";
 
 const useStyles = makeStyles({
@@ -237,8 +237,18 @@ export function CopilotChat(props: ICopilotChatProps) {
     } = props;
 
     const classes = useStyles();
+    const { authProvider } = useAuthentication();
     const { graphClient } = useGraph();
-    const copilotChatServiceRef = React.useRef(new CopilotChatService(graphClient));
+    const buildWorkIQClient = () => {
+        const httpClient = new AuthHttpClient(authProvider, new FetchHttpClient("https://workiq.svc.cloud.microsoft/rest"));
+        httpClient.resourceUri = "https://workiq.svc.cloud.microsoft/rest";
+        return httpClient;
+    }
+    const copilotChatServiceRef = React.useRef(new WorkIQChatService(
+        buildWorkIQClient()
+        //graphClient
+    ));
+
     const [messages, setMessages] = React.useState<IChatMessage[]>([]);
     const [currentResponse, setCurrentResponse] = React.useState<{ text: string } | null>(null);
     const [input, setInput] = React.useState<string>("");
@@ -263,10 +273,10 @@ export function CopilotChat(props: ICopilotChatProps) {
             setError("Failed to initialize conversation");
             setIsLoading(false);
         });
-    }, [graphClient]);
+    }, [authProvider]);
 
     const sendMessage = async () => {
-        if (!graphClient || !input.trim()) return;
+        if (!copilotChatServiceRef.current || !input.trim()) return;
 
         setIsLoading(true);
         setIsStreaming(true);
