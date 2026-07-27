@@ -13,5 +13,6 @@ export interface IDataGridService<T> {
   isNextPageAvailable(): boolean;
   getPreviousPage(): Promise<T[]>;
   isPreviousPageAvailable(): boolean;
+  getTotalRows(): number;
   getFieldSuggestions(field: DataField, existingFilters?: IQueryField[]): Promise<IEntityWithIdAndDisplayName[]>;
 }

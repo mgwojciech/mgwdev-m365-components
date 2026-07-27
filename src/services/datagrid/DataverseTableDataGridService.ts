@@ -9,6 +9,12 @@ import { DataField } from "../../model/DataField";
 import { IDataGridService } from "./DataGridService";
 import { IEntityWithIdAndDisplayName } from "../../model/IEntityWithIdAndDisplayName";
 
+export interface IQueryFieldWithJoinBy extends IQueryField {
+  joinBy?: "And" | "Or";
+  groupName?: string;
+  groupJoinBy?: "And" | "Or";
+}
+
 export class DataverseTableDataGridService<T> implements IDataGridService<T> {
   protected dataProvider: ODataPagedDataProvider<T>;
   protected dataFields: DataField[] = [];
@@ -22,7 +28,10 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
       dataverseEnv,
       tableName
     );
-    this.dataProvider.pageSize = 5
+    this.dataProvider.pageSize = 25
+  }
+  public getTotalRows(): number {
+    return this.dataProvider.allItemsCount;
   }
 
   private mapToExpand(field: DataField): string {
@@ -44,17 +53,43 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
     this.dataFields = fields;
   }
   public getData(
-    queryFields?: IQueryField[],
+    queryFields?: IQueryFieldWithJoinBy[],
     orderBy?: string,
     orderDir?: "ASC" | "DESC"
   ) {
     if (queryFields && queryFields.length > 0) {
+      //group query fields by groupName
+      const groupedQueryFields: Record<string, IQueryFieldWithJoinBy[]> = {};
+      for (const fld of queryFields) {
+        const groupName = fld.groupName || "default";
+        const existingGroup = groupedQueryFields[groupName];
+        if (existingGroup) {
+          existingGroup.push(fld);
+        } else {
+          groupedQueryFields[groupName] = [fld];
+        }
+      }
       const queryBuilder = new DataverseQueryBuilder();
+      for (const groupName in groupedQueryFields) {
+        const groupFields = groupedQueryFields[groupName];
+        if (groupFields.length > 1) {
+          //if groupJoinBy is not set, default to "And"
+          const groupJoinBy = groupFields[0].groupJoinBy || "And";
+          const queryBuilder = new DataverseQueryBuilder();
+          for (const fld of groupFields) {
+            if (!fld.type) {
+              fld.type = "Text";
+            }
+            queryBuilder.withFieldQuery(fld, fld.joinBy || "And");
+          }
+          queryBuilder.withQuery(queryBuilder.build(), groupJoinBy);
+        }
+      }
       for (const fld of queryFields) {
         if (!fld.type) {
           fld.type = "Text";
         }
-        queryBuilder.withFieldQuery(fld);
+        queryBuilder.withFieldQuery(fld, fld.joinBy || "And");
       }
 
       const query = queryBuilder.build();
@@ -68,9 +103,9 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
         (f) => f.name === orderByColumODataName
       );
       if (orderByColumn && orderByColumn.type === "Lookup") {
-        orderByColumODataName = `${orderByColumn.name}/${orderByColumn.expandFields[0]}`;
+        orderByColumODataName = `${orderByColumn.name}/${orderByColumn.relatedId}`;
       } else if (orderByColumn && orderByColumn.type === "User") {
-        orderByColumODataName = `${orderByColumn.name}/fullname`;
+        orderByColumODataName = `_${orderByColumn.name}_value`;
       }
       this.dataProvider.setOrder(orderByColumODataName, orderDir || "ASC");
     }
@@ -90,25 +125,28 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
   }
   public getFieldSuggestions = async (
     field: DataField,
-    existingFilters?: IQueryField[]
+    existingFilters?: IQueryFieldWithJoinBy[]
   ): Promise<IEntityWithIdAndDisplayName[]> => {
     if (field.type === "User") {
       let query = `${this.dataverseEnv}/api/data/v9.0/systemusers?`;
       if (existingFilters && existingFilters.length > 0) {
         const queryBuilder = new DataverseQueryBuilder();
-        for (const fld of existingFilters) {
+        for (const fld of existingFilters.filter((f) => f.name == field.name)) {
           if (!fld.type) {
             fld.type = "Text";
           }
           fld.name = field.expandFields[0];
           queryBuilder.withFieldQuery(fld);
         }
-        query += `$filter=${queryBuilder.build()}&`;
+        const filterQuery = queryBuilder.build();
+        if (filterQuery.length > 0) {
+          query += `$filter=${filterQuery}&`;
+        }
       }
       query += `$select=${field.expandFields.join(",")}`;
       const response = await this.dataverseClient.get(query, {
         headers: {
-          prefer: "odata.include-annotations=*",
+          prefer: "odata.maxpagesize=50,odata.include-annotations=*",
         },
       });
       const results = await response.json();
@@ -124,7 +162,7 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
         if (!fld.type) {
           fld.type = "Text";
         }
-        queryBuilder.withFieldQuery(fld);
+        queryBuilder.withFieldQuery(fld, fld.joinBy || "And");
       }
       query += `$filter=${queryBuilder.build()}&`;
     }
@@ -138,7 +176,7 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
     }
     const response = await this.dataverseClient.get(query, {
       headers: {
-        prefer: "odata.include-annotations=*",
+          prefer: "odata.maxpagesize=50,odata.include-annotations=*",
       },
     });
     const results = await response.json();

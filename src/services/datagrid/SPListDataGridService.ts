@@ -5,11 +5,15 @@ import { IDataGridService } from "./DataGridService";
 
 export class SPListDataGridService<T> implements IDataGridService<T> {
     protected dataProvider: SPListItemCamlPagedDataProvider<T>;
-    constructor(protected spHttpClient: IHttpClient, protected siteUrl: string, protected listId: string) {
+    constructor(protected spHttpClient: IHttpClient, protected siteUrl: string, protected listId: string, public rowLimit: number = 25) {
         this.dataProvider = new SPListItemCamlPagedDataProvider<T>(spHttpClient, siteUrl, listId);
+        this.dataProvider.pageSize = rowLimit;
     }
     public setFields(fields: DataField[]) {
         this.dataProvider.selectedFields = fields.map(fld => fld.name);
+    }
+    public getTotalRows(): number {
+        return this.dataProvider.allItemsCount;
     }
     public async getData(queryFields?: IQueryField[], orderBy?: string, orderDir?: "ASC" | "DESC"): Promise<T[]> {
         const queryBuilder = new CamlQueryBuilder();

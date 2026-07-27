@@ -20,7 +20,9 @@ export class GraphEntityDataGridService<T> implements IDataGridService<T> {
       true
     );
   }
-
+  public getTotalRows(): number {
+    return this.dataProvider.allItemsCount;
+  }
   private mapToExpand(field: DataField): string {
     if (!field.expandFields) {
       return field.name;

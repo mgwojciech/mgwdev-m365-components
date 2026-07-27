@@ -29,6 +29,7 @@ import {
 } from "@fluentui/react-icons";
 import { DataGridFilterPanel } from "./DataGridFilterPanel";
 import { IQueryField } from "mgwdev-m365-helpers";
+import { IQueryFieldWithJoinBy } from "../..";
 
 export type DataGridSelectionMode = "single" | "multiselect";
 
@@ -36,8 +37,9 @@ export interface IGenericDataGridProps<T> {
   dataService: IDataGridService<T>;
   fieldsToRender: DataField[];
   customRenderers?: IColumnRenderer[];
-  systemFilter?: IQueryField[];
+  systemFilter?: IQueryFieldWithJoinBy[];
   selectionMode?: DataGridSelectionMode;
+  rowLimit?: number;
   getRowId?: (item: T) => string;
   onSelectionChange?: (selectedItems: T[]) => void;
   renderFilter?: (
@@ -45,6 +47,7 @@ export interface IGenericDataGridProps<T> {
     onFilterSet: (field: DataField, queryFields: IQueryField[]) => void,
     initialQueryFields?: IQueryField[]
   ) => React.ReactElement;
+  onDataFetched?: (items: T[], count: number) => void;
 }
 
 const useGenericDataGridStyles = makeStyles({
@@ -113,6 +116,13 @@ export function GenericDataGrid<T>(props: IGenericDataGridProps<T>) {
   const [selectedRows, setSelectedRows] = React.useState<Set<SelectionItemId>>(
     new Set()
   );
+  const isNextPageAvailable = React.useMemo(
+    () => props.dataService.isNextPageAvailable(),
+    [props.dataService, items]);
+  const isPreviousPageAvailable = React.useMemo(
+    () => props.dataService.isPreviousPageAvailable(),
+    [props.dataService, items]
+  );
 
   const getRowIdForItem = React.useCallback(
     (item: T, index: number): TableRowId => {
@@ -180,7 +190,12 @@ export function GenericDataGrid<T>(props: IGenericDataGridProps<T>) {
         sortState?.sortColumn?.toString(),
         sortState?.sortDirection == "ascending" ? "ASC" : "DESC"
       )
-      .then((d) => setItems(d))
+      .then((d) => {
+        setItems(d);
+        if (props.onDataFetched) {
+          props.onDataFetched([], props.dataService.getTotalRows());
+        }
+      })
       .catch((err) => {
         setError(err?.message || "An error occurred while loading data");
         setItems([]);
@@ -253,9 +268,9 @@ export function GenericDataGrid<T>(props: IGenericDataGridProps<T>) {
               selectionCell={
                 props.selectionMode
                   ? {
-                      checkboxIndicator: { "aria-label": "Select row" },
-                      radioIndicator: { "aria-label": "Select row" },
-                    }
+                    checkboxIndicator: { "aria-label": "Select row" },
+                    radioIndicator: { "aria-label": "Select row" },
+                  }
                   : undefined
               }
             >
@@ -269,7 +284,7 @@ export function GenericDataGrid<T>(props: IGenericDataGridProps<T>) {
       <div className={classNames.pagination}>
         <Button
           icon={<ChevronLeft16Regular />}
-          disabled={!props.dataService.isPreviousPageAvailable()}
+          disabled={!isPreviousPageAvailable}
           onClick={() => {
             props.dataService
               .getPreviousPage()
@@ -279,11 +294,11 @@ export function GenericDataGrid<T>(props: IGenericDataGridProps<T>) {
           aria-label="Previous page"
           data-testid="datagrid-prev-page"
         >
-          
+
         </Button>
         <Button
           icon={<ChevronRight16Regular />}
-          disabled={!props.dataService.isNextPageAvailable()}
+          disabled={!isNextPageAvailable}
           onClick={() => {
             props.dataService
               .getNextPage()
