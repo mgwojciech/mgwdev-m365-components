@@ -104,7 +104,7 @@ export function DataverseTableGridStandalone<T>(props: IDataverseTableDataGridPr
               name: (field.type == "Lookup" || field.type == "User") ? `${field.name}/${field.relatedId}` : field.name
             }, filters)
           }
-        }} table={props.tableName} column={field} getFieldSuggestions={(fld, existingFields) => dataGridService.getFieldSuggestions(fld, props.systemFilter)} />
+        }} table={props.tableName} column={field} getFieldSuggestions={(fld, existingFields) => dataGridService.getFieldSuggestions(fld, existingFields)} />
       }}
     />
   );

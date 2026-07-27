@@ -1,7 +1,8 @@
 {
   "name": "mgwdev-m365-components",
   "private": false,
-  "version": "0.0.15",
+  "version": "0.0.16",
+  "sideEffects": false,
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
@@ -25,13 +26,13 @@
     "handlebars-group-by": "^1.0.1",
     "handlebars-helpers": "^0.10.0",
     "jspath": "^0.4.0",
-    "mgwdev-m365-helpers": "^0.3.4",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
     "vite-plugin-dts": "^3.6.4"
   },
   "peerDependencies": {
     "@fluentui/react-components": "^9.74.3",
+    "mgwdev-m365-helpers": "^0.3.4",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0"
   },
@@ -51,6 +52,7 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "jest-environment-jsdom": "^29.7.0",
     "jsdom": "^26.0.0",
+    "mgwdev-m365-helpers": "^0.3.4",
     "ts-jest": "^29.1.1",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",

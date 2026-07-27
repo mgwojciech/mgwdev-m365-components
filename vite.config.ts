@@ -24,12 +24,25 @@ export default defineConfig({
             fileName: (format) => `mgwdev-m365-components.${format}.js`,
         },
         rollupOptions: {
-            external: ['react', 'react-dom', '@fluentui/react-components'],
+            external: (id) => {
+                return [
+                    'react',
+                    'react/jsx-runtime',
+                    'react/jsx-dev-runtime',
+                    'react-dom',
+                    '@fluentui/react-components',
+                    'mgwdev-m365-helpers',
+                ].includes(id) || id.startsWith('mgwdev-m365-helpers/');
+            },
             output: {
-                globals: {
-                    '@fluentui/react-components': 'FluentUIReactComponents',
-                    react: 'React',
-                    'react-dom': 'ReactDOM',
+                globals: (id) => {
+                    if (id === 'react') return 'React';
+                    if (id === 'react/jsx-runtime') return 'jsxRuntime';
+                    if (id === 'react/jsx-dev-runtime') return 'jsxDevRuntime';
+                    if (id === 'react-dom') return 'ReactDOM';
+                    if (id === '@fluentui/react-components') return 'FluentUIReactComponents';
+                    if (id === 'mgwdev-m365-helpers' || id.startsWith('mgwdev-m365-helpers/')) return 'mgwdevM365Helpers';
+                    return id;
                 },
             },
         },
