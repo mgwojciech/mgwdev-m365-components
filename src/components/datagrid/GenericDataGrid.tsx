@@ -48,6 +48,8 @@ export interface IGenericDataGridProps<T> {
     initialQueryFields?: IQueryField[]
   ) => React.ReactElement;
   onDataFetched?: (items: T[], count: number) => void;
+  initialOrderBy?: string;
+  initialOrderByDir?: "ascending" | "descending";
 }
 
 const useGenericDataGridStyles = makeStyles({
@@ -95,15 +97,15 @@ export function GenericDataGrid<T>(props: IGenericDataGridProps<T>) {
         ),
         renderCell: (item: T) =>
           renderer.renderField(field, item[field.name], item),
-        compare: (a: T, b: T) => a[field.name] - b[field.name],
+        compare: field.disableSorting ? undefined : (a: T, b: T) => a[field.name] - b[field.name],
       })
     );
   }, [props.fieldsToRender]);
   const [sortState, setSortState] = React.useState<
     Parameters<NonNullable<DataGridProps["onSortChange"]>>[1]
   >({
-    sortColumn: props.fieldsToRender.find((f) => !f.disableSorting)?.name,
-    sortDirection: "ascending",
+    sortColumn: props.initialOrderBy || props.fieldsToRender.find((f) => !f.disableSorting)?.name,
+    sortDirection: props.initialOrderByDir || "ascending",
   });
   const onSortChange: DataGridProps["onSortChange"] = (e, nextSortState) => {
     setSortState(nextSortState);

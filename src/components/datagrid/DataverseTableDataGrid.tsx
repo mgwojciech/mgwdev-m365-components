@@ -24,6 +24,8 @@ export interface IDataverseTableDataGridProps<T> {
   getRowId?: (item: T) => string;
   onSelectionChange?: (selectedItems: T[]) => void;
   onDataFetched?: (items: T[], count: number) => void;
+  initialOrderBy?: string;
+  initialOrderByDir?: "ascending" | "descending";
 }
 
 export function DataverseTableGrid<T>(props: IDataverseTableDataGridProps<T>) {
@@ -82,6 +84,8 @@ export function DataverseTableGridStandalone<T>(props: IDataverseTableDataGridPr
       fieldsToRender={props.fieldsToRender}
       customRenderers={renderers}
       selectionMode={props.selectionMode}
+      initialOrderBy={props.initialOrderBy}
+      initialOrderByDir={props.initialOrderByDir}
       systemFilter={props.systemFilter}
       getRowId={props.getRowId}
       onSelectionChange={props.onSelectionChange}

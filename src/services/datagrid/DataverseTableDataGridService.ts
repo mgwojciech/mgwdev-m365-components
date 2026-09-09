@@ -102,10 +102,15 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
       let orderByColumn = this.dataFields.find(
         (f) => f.name === orderByColumODataName
       );
-      if (orderByColumn && orderByColumn.type === "Lookup") {
-        orderByColumODataName = `${orderByColumn.name}/${orderByColumn.relatedId}`;
-      } else if (orderByColumn && orderByColumn.type === "User") {
-        orderByColumODataName = `_${orderByColumn.name}_value`;
+      if (orderByColumn && orderByColumn.orderByFieldOverride) {
+        orderByColumODataName = orderByColumn.orderByFieldOverride;
+      }
+      else {
+        if (orderByColumn && orderByColumn.type === "Lookup") {
+          orderByColumODataName = `${orderByColumn.name}/${orderByColumn.relatedId}`;
+        } else if (orderByColumn && orderByColumn.type === "User") {
+          orderByColumODataName = `_${orderByColumn.name}_value`;
+        }
       }
       this.dataProvider.setOrder(orderByColumODataName, orderDir || "ASC");
     }
@@ -176,7 +181,7 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
     }
     const response = await this.dataverseClient.get(query, {
       headers: {
-          prefer: "odata.maxpagesize=50,odata.include-annotations=*",
+        prefer: "odata.maxpagesize=50,odata.include-annotations=*",
       },
     });
     const results = await response.json();
