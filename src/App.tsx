@@ -6,7 +6,7 @@ import {
   SPContextProvider,
 } from "./context";
 import { Test } from "./components/Test";
-import { GraphPersona, M365Search, SPPermissionTrimmedComponent } from "./components";
+import { DataverseForm, GraphPersona, M365Search, SPPermissionTrimmedComponent } from "./components";
 import {
   DrivePicker,
   PeoplePicker,
@@ -223,7 +223,7 @@ function App() {
   const clientId = import.meta.env.VITE_FRONTEND_CLIENT_ID;
   const tenantId = import.meta.env.VITE_FRONTEND_TENANT_ID || "organizations";
   const dataverseEnv = import.meta.env.VITE_FRONTEND_DATAVERSE_ENV;
-  
+
   const authService = new Msal2AuthenticationService(
     { clientId: clientId, tenantId: tenantId, redirectUri: `${window.location.origin}/redirect` },
     false
@@ -276,7 +276,7 @@ function App() {
           </>
           <SPListDataGrid
             selectionMode="single"
-            getRowId={(item)=>item["ID"]}
+            getRowId={(item) => item["ID"]}
             listId="a8dd0add-5556-4a96-8dae-51d56fa374d6"
             fieldsToRender={[{
               name: "ID",
@@ -291,7 +291,7 @@ function App() {
               name: "Author",
               type: "User"
             }]}
-            onSelectionChange={(items)=>{
+            onSelectionChange={(items) => {
               console.log(items);
             }}
           />
@@ -324,7 +324,7 @@ function App() {
               renderField: (field, value, item) => <Text >{value ? value[0] : ""}</Text>
             }]}
           /> */}
-          <DataverseContextProvider dataverseResource={dataverseEnv}>
+          <DataverseContextProvider dataverseResource={dataverseEnv} >
             <DataverseTableGrid
               tableName="crc82_opportunities"
               fieldsToRender={[
@@ -384,6 +384,7 @@ function App() {
                 renderField: (field, value, item) => <Link href={`mailto:${value["crc82_email"]}`}>{value["crc82_contactname"]}</Link>
               }]}
             />
+          
           </DataverseContextProvider>
         </SPContextProvider>
       </GraphContextProvider>
