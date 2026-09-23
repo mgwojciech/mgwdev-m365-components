@@ -1,7 +1,7 @@
 {
   "name": "mgwdev-m365-components",
   "private": false,
-  "version": "0.0.18-experimental",
+  "version": "0.0.19-experimental",
   "sideEffects": false,
   "scripts": {
     "start": "vite",
