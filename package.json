@@ -52,7 +52,7 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "jest-environment-jsdom": "^29.7.0",
     "jsdom": "^26.0.0",
-    "mgwdev-m365-helpers": "^0.3.4",
+    "mgwdev-m365-helpers": "^0.3.5",
     "ts-jest": "^29.1.1",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
