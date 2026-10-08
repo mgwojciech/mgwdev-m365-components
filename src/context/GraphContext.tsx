@@ -21,7 +21,7 @@ export const GraphContextProvider = (props: IGraphContextProviderProps) => {
             return props.graphClient;
         }
         else if (authProvider) {
-            return new BatchGraphClient(new AuthHttpClient(authProvider, new FetchHttpClient()));
+            return new BatchGraphClient(new AuthHttpClient(authProvider, new FetchHttpClient("https://graph.microsoft.com")));
         }
         return undefined;
     }
