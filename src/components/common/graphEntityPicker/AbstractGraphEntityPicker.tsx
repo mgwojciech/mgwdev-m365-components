@@ -31,7 +31,7 @@ export function AbstractGraphEntityPicker<T extends IEntityWithIdAndDisplayName>
             try {
                 const queriedEntities = await props.onDataRequested(searchText);
                 //get distinct entities
-                setEntities([...queriedEntities, ...selectedEntities].reduce((acc, current) => {
+                setEntities([ ...selectedEntities,...queriedEntities].reduce((acc, current) => {
                     const x = acc.find(item => item.id === current.id);
                     if (!x) {
                         return acc.concat([current]);
@@ -63,6 +63,7 @@ export function AbstractGraphEntityPicker<T extends IEntityWithIdAndDisplayName>
             onChange={(e) => {
                 setInputValue(e.target.value);
             }}
+            placeholder={props.value?.map((x) => x.displayName).join(", ") || "Select an entity"}
             size={props.size}
             disabled={props.disabled}
             onOptionSelect={(e, data) => {

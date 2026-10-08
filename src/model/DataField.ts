@@ -8,4 +8,5 @@ export type DataField = {
   relatedId?: string;
   disableSorting?: boolean;
   disableFiltering?: boolean;
+  orderByFieldOverride?: string;
 };

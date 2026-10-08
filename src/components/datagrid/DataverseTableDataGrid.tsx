@@ -24,6 +24,9 @@ export interface IDataverseTableDataGridProps<T> {
   getRowId?: (item: T) => string;
   onSelectionChange?: (selectedItems: T[]) => void;
   onDataFetched?: (items: T[], count: number) => void;
+  initialOrderBy?: string;
+  initialOrderByDir?: "ascending" | "descending";
+  skipSelectExpandClause?: boolean;
 }
 
 export function DataverseTableGrid<T>(props: IDataverseTableDataGridProps<T>) {
@@ -71,7 +74,8 @@ export function DataverseTableGridStandalone<T>(props: IDataverseTableDataGridPr
       new DataverseTableDataGridService<T>(
         props.dataverseClient,
         props.dataverseEnv,
-        props.tableName
+        props.tableName,
+        props.skipSelectExpandClause
       ),
     [props.dataverseEnv, props.tableName]
   );
@@ -82,12 +86,14 @@ export function DataverseTableGridStandalone<T>(props: IDataverseTableDataGridPr
       fieldsToRender={props.fieldsToRender}
       customRenderers={renderers}
       selectionMode={props.selectionMode}
+      initialOrderBy={props.initialOrderBy}
+      initialOrderByDir={props.initialOrderByDir}
       systemFilter={props.systemFilter}
       getRowId={props.getRowId}
       onSelectionChange={props.onSelectionChange}
       onDataFetched={props.onDataFetched}
       renderFilter={(field, onFilterSet, initialQuery) => {
-        if(props.filterComponents && props.filterComponents.find(fc => fc.fieldName === field.name)){
+        if (props.filterComponents && props.filterComponents.find(fc => fc.fieldName === field.name)) {
           return props.filterComponents.find(fc => fc.fieldName === field.name)!.filterComponent(field, onFilterSet, initialQuery);
         }
         return <DataverseColumnFilterCombobox additionalFilters={initialQuery} onEntitySelected={(entities) => {

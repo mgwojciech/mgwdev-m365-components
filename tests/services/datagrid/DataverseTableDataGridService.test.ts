@@ -99,7 +99,7 @@ describe("DataverseTableDataGridService", () => {
 
         await service.getData([], "primarycontactid", "ASC");
 
-        expect(service["dataProvider"].setOrder).toHaveBeenCalledWith("primarycontactid/fullname", "ASC");
+        expect(service["dataProvider"].setOrder).toHaveBeenCalledWith("primarycontactid/contactid", "ASC");
     });
 
     test("should return pagination availability", () => {

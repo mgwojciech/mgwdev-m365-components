@@ -21,7 +21,8 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
   constructor(
     protected dataverseClient: IHttpClient,
     protected dataverseEnv: string,
-    protected tableName: string
+    protected tableName: string,
+    protected skipSelectExpandClause?: boolean
   ) {
     this.dataProvider = new DataversePagedDataProvider<T>(
       dataverseClient,
@@ -42,14 +43,17 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
   }
 
   public setFields(fields: DataField[]) {
-    this.dataProvider.selectQuery = fields
-      .filter((f) => f.type !== "Lookup")
-      .map((f) => f.name)
-      .join(",");
-    this.dataProvider.expandQuery = fields
-      .filter((f) => f.type === "Lookup" || f.type === "User")
-      .map((f) => this.mapToExpand(f))
-      .join(",");
+    if (!this.skipSelectExpandClause) {
+      this.dataProvider.selectQuery = fields
+        .filter((f) => f.type !== "Lookup")
+        .map((f) => f.name)
+        .join(",");
+
+      this.dataProvider.expandQuery = fields
+        .filter((f) => f.type === "Lookup" || f.type === "User")
+        .map((f) => this.mapToExpand(f))
+        .join(",");
+    }
     this.dataFields = fields;
   }
   public getData(
@@ -102,10 +106,15 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
       let orderByColumn = this.dataFields.find(
         (f) => f.name === orderByColumODataName
       );
-      if (orderByColumn && orderByColumn.type === "Lookup") {
-        orderByColumODataName = `${orderByColumn.name}/${orderByColumn.relatedId}`;
-      } else if (orderByColumn && orderByColumn.type === "User") {
-        orderByColumODataName = `_${orderByColumn.name}_value`;
+      if (orderByColumn && orderByColumn.orderByFieldOverride) {
+        orderByColumODataName = orderByColumn.orderByFieldOverride;
+      }
+      else {
+        if (orderByColumn && orderByColumn.type === "Lookup") {
+          orderByColumODataName = `${orderByColumn.name}/${orderByColumn.relatedId}`;
+        } else if (orderByColumn && orderByColumn.type === "User") {
+          orderByColumODataName = `_${orderByColumn.name}_value`;
+        }
       }
       this.dataProvider.setOrder(orderByColumODataName, orderDir || "ASC");
     }
@@ -176,7 +185,7 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
     }
     const response = await this.dataverseClient.get(query, {
       headers: {
-          prefer: "odata.maxpagesize=50,odata.include-annotations=*",
+        prefer: "odata.maxpagesize=50,odata.include-annotations=*",
       },
     });
     const results = await response.json();
