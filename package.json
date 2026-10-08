@@ -1,8 +1,17 @@
 {
   "name": "mgwdev-m365-components",
+  "description": "React components and helpers for building SharePoint, Microsoft Graph, and Dataverse experiences in Microsoft 365 apps.",
   "private": false,
-  "version": "0.0.17",
+  "version": "0.1.0",
   "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mgwojciech/mgwdev-m365-components.git"
+  },
+  "homepage": "https://github.com/mgwojciech/mgwdev-m365-components",
+  "bugs": {
+    "url": "https://github.com/mgwojciech/mgwdev-m365-components/issues"
+  },
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
@@ -15,7 +24,20 @@
   },
   "keywords": [
     "SharePoint",
-    "MSGraph"
+    "MSGraph",
+    "Microsoft 365",
+    "microsoft-365",
+    "Dataverse",
+    "Dynamics",
+    "React",
+    "Graph",
+    "Fluent UI",
+    "Teams",
+    "Copilot",
+    "components",
+    "library",
+    "spfx",
+    "enterprise"
   ],
   "author": "m.g.wojciechowski@gmail.com",
   "license": "MIT",

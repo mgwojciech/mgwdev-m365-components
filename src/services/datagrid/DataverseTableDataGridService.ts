@@ -21,7 +21,8 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
   constructor(
     protected dataverseClient: IHttpClient,
     protected dataverseEnv: string,
-    protected tableName: string
+    protected tableName: string,
+    protected skipSelectExpandClause?: boolean
   ) {
     this.dataProvider = new DataversePagedDataProvider<T>(
       dataverseClient,
@@ -42,14 +43,17 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
   }
 
   public setFields(fields: DataField[]) {
-    this.dataProvider.selectQuery = fields
-      .filter((f) => f.type !== "Lookup")
-      .map((f) => f.name)
-      .join(",");
-    this.dataProvider.expandQuery = fields
-      .filter((f) => f.type === "Lookup" || f.type === "User")
-      .map((f) => this.mapToExpand(f))
-      .join(",");
+    if (!this.skipSelectExpandClause) {
+      this.dataProvider.selectQuery = fields
+        .filter((f) => f.type !== "Lookup")
+        .map((f) => f.name)
+        .join(",");
+
+      this.dataProvider.expandQuery = fields
+        .filter((f) => f.type === "Lookup" || f.type === "User")
+        .map((f) => this.mapToExpand(f))
+        .join(",");
+    }
     this.dataFields = fields;
   }
   public getData(
