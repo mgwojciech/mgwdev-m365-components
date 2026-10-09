@@ -10,6 +10,7 @@ import { DateRenderer } from "./columnRenderers/DateRenderer";
 import { DataverseColumnFilterCombobox } from "./filterComponents/DataverseColumnFilterCombobox";
 import { IHttpClient, IQueryField } from "mgwdev-m365-helpers";
 import { DataverseChoiceRenderer } from "./columnRenderers/DataverseChoiceRenderer";
+import { DateRangeColumnFilter } from "./filterComponents/DateRangeColumnFilter";
 
 export interface IDataverseTableDataGridProps<T> {
   tableName: string;
@@ -95,6 +96,9 @@ export function DataverseTableGridStandalone<T>(props: IDataverseTableDataGridPr
       renderFilter={(field, onFilterSet, initialQuery) => {
         if (props.filterComponents && props.filterComponents.find(fc => fc.fieldName === field.name)) {
           return props.filterComponents.find(fc => fc.fieldName === field.name)!.filterComponent(field, onFilterSet, initialQuery);
+        }
+        if (field.type === "DateTime") {
+          return <DateRangeColumnFilter fieldName={field.name} onFilterSet={onFilterSet} />;
         }
         return <DataverseColumnFilterCombobox additionalFilters={initialQuery} onEntitySelected={(entities) => {
           if (entities) {

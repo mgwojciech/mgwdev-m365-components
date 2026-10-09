@@ -79,14 +79,14 @@ export class DataverseTableDataGridService<T> implements IDataGridService<T> {
         if (groupFields.length > 1) {
           //if groupJoinBy is not set, default to "And"
           const groupJoinBy = groupFields[0].groupJoinBy || "And";
-          const queryBuilder = new DataverseQueryBuilder();
+          const groupBuilder = new DataverseQueryBuilder();
           for (const fld of groupFields) {
             if (!fld.type) {
               fld.type = "Text";
             }
-            queryBuilder.withFieldQuery(fld, fld.joinBy || "And");
+            groupBuilder.withFieldQuery(fld, fld.joinBy || "And");
           }
-          queryBuilder.withQuery(queryBuilder.build(), groupJoinBy);
+          queryBuilder.withQuery(`(${groupBuilder.build()})`, groupJoinBy);
         }
       }
       for (const fld of queryFields) {
