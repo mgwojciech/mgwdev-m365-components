@@ -3,7 +3,7 @@ import { DataField } from "../../model/DataField";
 import { IColumnRenderer } from "./columnRenderers/IColumnRenderer";
 import { useDataverse, useGraph } from "../../context";
 import { DataverseTableDataGridService, IQueryFieldWithJoinBy } from "../../services/datagrid/DataverseTableDataGridService";
-import { DataGridSelectionMode, GenericDataGrid } from "./GenericDataGrid";
+import { DataGridSelectionMode, GenericDataGrid, IGenericDataGridProps } from "./GenericDataGrid";
 import { DataverseUserRenderer } from "./columnRenderers/DataverseUserRenderer";
 import { DataverseLookupRenderer } from "./columnRenderers/DataverseLookupRenderer";
 import { DateRenderer } from "./columnRenderers/DateRenderer";
@@ -11,7 +11,7 @@ import { DataverseColumnFilterCombobox } from "./filterComponents/DataverseColum
 import { IHttpClient, IQueryField } from "mgwdev-m365-helpers";
 import { DataverseChoiceRenderer } from "./columnRenderers/DataverseChoiceRenderer";
 
-export interface IDataverseTableDataGridProps<T> {
+export interface IDataverseTableDataGridProps<T> extends Partial<IGenericDataGridProps<T>> {
   tableName: string;
   fieldsToRender: DataField[];
   customRenderers?: IColumnRenderer[];
@@ -83,15 +83,8 @@ export function DataverseTableGridStandalone<T>(props: IDataverseTableDataGridPr
   return (
     <GenericDataGrid<T>
       dataService={dataGridService}
-      fieldsToRender={props.fieldsToRender}
+      {...props}
       customRenderers={renderers}
-      selectionMode={props.selectionMode}
-      initialOrderBy={props.initialOrderBy}
-      initialOrderByDir={props.initialOrderByDir}
-      systemFilter={props.systemFilter}
-      getRowId={props.getRowId}
-      onSelectionChange={props.onSelectionChange}
-      onDataFetched={props.onDataFetched}
       renderFilter={(field, onFilterSet, initialQuery) => {
         if (props.filterComponents && props.filterComponents.find(fc => fc.fieldName === field.name)) {
           return props.filterComponents.find(fc => fc.fieldName === field.name)!.filterComponent(field, onFilterSet, initialQuery);

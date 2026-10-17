@@ -1,0 +1,203 @@
+import { DataverseFetchXMLDataProvider, FetchQueryBuilder, IHttpClient } from "mgwdev-m365-helpers";
+import { IDataGridService } from "./DataGridService";
+import { DataField, IEntityWithIdAndDisplayName, IQueryFieldWithJoinBy } from "../..";
+
+export class DataverseFetchXmlTableDataService<T> implements IDataGridService<T> {
+    protected dataProvider: DataverseFetchXMLDataProvider<T>;
+    protected dataFields: DataField[] = [];
+    constructor(
+        protected dataverseClient: IHttpClient,
+        protected dataverseEnv: string,
+        protected tableName: string,
+        protected skipSelectExpandClause?: boolean
+    ) {
+        this.dataProvider = new DataverseFetchXMLDataProvider<T>(
+            dataverseClient,
+            dataverseEnv,
+            tableName,
+            []
+        );
+        this.dataProvider.pageSize = 25
+    }
+    public getTotalRows(): number {
+        return this.dataProvider.allItemsCount;
+    }
+
+    private mapToExpand(field: DataField): string {
+        if (!field.expandFields) {
+            return field.name;
+        }
+        return `${field.name}($select=${field.expandFields.join(",")})`;
+    }
+
+    public setFields(fields: DataField[]) {
+        if (!this.skipSelectExpandClause) {
+            this.dataProvider.columns = fields
+                .map((f) => f.name)
+        }
+        this.dataFields = fields;
+    }
+    public getData(
+        queryFields?: IQueryFieldWithJoinBy[],
+        orderBy?: string,
+        orderDir?: "ASC" | "DESC"
+    ) {
+        if (queryFields && queryFields.length > 0) {
+            //group query fields by groupName
+            const groupedQueryFields: Record<string, IQueryFieldWithJoinBy[]> = {};
+            for (const fld of queryFields) {
+                const groupName = fld.groupName || "default";
+                const existingGroup = groupedQueryFields[groupName];
+                if (existingGroup) {
+                    existingGroup.push(fld);
+                } else {
+                    groupedQueryFields[groupName] = [fld];
+                }
+            }
+            const queryBuilder = new FetchQueryBuilder();
+            for (const groupName in groupedQueryFields) {
+                const groupFields = groupedQueryFields[groupName];
+                if (groupFields.length > 1) {
+                    //if groupJoinBy is not set, default to "And"
+                    const groupJoinBy = groupFields[0].groupJoinBy || "And";
+                    const queryBuilder = new FetchQueryBuilder();
+                    for (const fld of groupFields) {
+                        if (!fld.type) {
+                            fld.type = "Text";
+                        }
+                        queryBuilder.withFieldQuery(fld, fld.joinBy || "And");
+                    }
+                    queryBuilder.withQuery(queryBuilder.build(), groupJoinBy);
+                }
+            }
+            for (const fld of queryFields) {
+                if (!fld.type) {
+                    fld.type = "Text";
+                }
+                queryBuilder.withFieldQuery(fld, fld.joinBy || "And");
+            }
+
+            const query = queryBuilder.build();
+            this.dataProvider.setQuery(query);
+        } else {
+            this.dataProvider.setQuery("");
+        }
+        if (orderBy) {
+            let orderByColumODataName = orderBy;
+            let orderByColumn = this.dataFields.find(
+                (f) => f.name === orderByColumODataName
+            );
+            if (orderByColumn && orderByColumn.orderByFieldOverride) {
+                orderByColumODataName = orderByColumn.orderByFieldOverride;
+            }
+            else {
+                if (orderByColumn && orderByColumn.type === "Lookup") {
+                    orderByColumODataName = `${orderByColumn.name}/${orderByColumn.relatedId}`;
+                } else if (orderByColumn && orderByColumn.type === "User") {
+                    orderByColumODataName = `_${orderByColumn.name}_value`;
+                }
+            }
+            this.dataProvider.setOrder(orderByColumODataName, orderDir || "ASC");
+        }
+        return this.dataProvider.getData();
+    }
+    public getNextPage(): Promise<T[]> {
+        return this.dataProvider.getNextPage();
+    }
+    public isNextPageAvailable(): boolean {
+        return this.dataProvider.isNextPageAvailable();
+    }
+    public getPreviousPage(): Promise<T[]> {
+        return this.dataProvider.getPreviousPage();
+    }
+    public isPreviousPageAvailable(): boolean {
+        return this.dataProvider.isPreviousPageAvailable();
+    }
+    public getFieldSuggestions = async (
+        field: DataField,
+        existingFilters?: IQueryFieldWithJoinBy[]
+    ): Promise<IEntityWithIdAndDisplayName[]> => {
+        if (field.type === "User") {
+            let query = `${this.dataverseEnv}/api/data/v9.0/systemusers?`;
+            if (existingFilters && existingFilters.length > 0) {
+                const queryBuilder = new FetchQueryBuilder();
+                for (const fld of existingFilters.filter((f) => f.name == field.name)) {
+                    if (!fld.type) {
+                        fld.type = "Text";
+                    }
+                    fld.name = field.expandFields[0];
+                    queryBuilder.withFieldQuery(fld);
+                }
+                const filterQuery = queryBuilder.build();
+                if (filterQuery.length > 0) {
+                    query += `$filter=${filterQuery}&`;
+                }
+            }
+            query += `$select=${field.expandFields.join(",")}`;
+            const response = await this.dataverseClient.get(query, {
+                headers: {
+                    prefer: "odata.maxpagesize=50,odata.include-annotations=*",
+                },
+            });
+            const results = await response.json();
+            return results.value.map((item: any) => ({
+                id: item[field.relatedId],
+                displayName: item[field.expandFields[0]],
+            }));
+        }
+        let query = `${this.dataverseEnv}/api/data/v9.0/${this.tableName}?`;
+        if (existingFilters && existingFilters.length > 0) {
+            const queryBuilder = new FetchQueryBuilder();
+            for (const fld of existingFilters) {
+                if (!fld.type) {
+                    fld.type = "Text";
+                }
+                queryBuilder.withFieldQuery(fld, fld.joinBy || "And");
+            }
+            query += `$filter=${queryBuilder.build()}&`;
+        }
+        if (field.type === "Lookup") {
+            query += `$apply=groupby((${field.name}/${field.relatedId || field.name + "_id"
+                },${field.name}/${field.expandFields[0]}))`;
+        } else if (field.type == "DateTime") {
+            query += `$apply=aggregate(${field.name} with min as ${field.name})`;
+        } else {
+            query += `$apply=groupby((${field.name}))`;
+        }
+        const response = await this.dataverseClient.get(query, {
+            headers: {
+                prefer: "odata.maxpagesize=50,odata.include-annotations=*",
+            },
+        });
+        const results = await response.json();
+        //@ts-ignore
+        if (field.type === "Lookup" || field.type === "User") {
+            if (results.value.length === 0) {
+                return [];
+            }
+            let idFldName = "";
+            let displayNameFldName = "";
+            const firstItem = results.value[0];
+            for (const property in firstItem) {
+                if (property.indexOf(field.relatedId) >= 0) {
+                    idFldName = property;
+                }
+                if (property.indexOf(field.expandFields[0]) >= 0) {
+                    displayNameFldName = property;
+                }
+            }
+            return results.value.map((item: any) => ({
+                id: item[idFldName],
+                displayName: item[displayNameFldName],
+            }));
+        }
+        return results.value.map((item: any) => ({
+            id: item[field.name],
+            displayName: item[
+                `${field.name}@OData.Community.Display.V1.FormattedValue`
+            ]
+                ? item[`${field.name}@OData.Community.Display.V1.FormattedValue`]
+                : item[field.name],
+        }));
+    };
+}
