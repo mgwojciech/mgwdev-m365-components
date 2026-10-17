@@ -24,6 +24,7 @@ import { DataverseTableGrid } from "./components/datagrid/DataverseTableDataGrid
 import { GraphEntityDataGrid } from "./components/datagrid/GraphEntityDataGrid";
 import { SPListDataGrid } from "./components/datagrid/SPListDataGrid";
 import { CopilotChat } from "./components/CopilotChat";
+import { UserManagement } from "./components/dataverse/userManagement/UserManagement";
 
 function App() {
   const pnpSearchWPConfig = {
@@ -385,7 +386,7 @@ function App() {
                 renderField: (field, value, item) => <Link href={`mailto:${value["crc82_email"]}`}>{value["crc82_contactname"]}</Link>
               }]}
             />
-          
+            <UserManagement />
           </DataverseContextProvider>
         </SPContextProvider>
       </GraphContextProvider>

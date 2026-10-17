@@ -8,3 +8,4 @@ export * from "./fieldRenderers/DateTimeFieldRenderer";
 export * from "./fieldRenderers/ChoiceFieldRenderer";
 export * from "./fieldRenderers/MultiChoiceFieldRenderer";
 export * from "./fieldRenderers/LookupFieldRenderer";
+export * from "./userManagement/UserManagement";

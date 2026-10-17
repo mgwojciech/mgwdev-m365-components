@@ -28,6 +28,30 @@ The providers do this for you:
 
 This is intentionally lightweight: the context layer handles the plumbing, while the actual business logic stays in normal React components or service classes.
 
+## Managing Dataverse user assignments
+
+Render `UserManagement` inside `DataverseContextProvider` to select a user and
+view their teams, directly assigned security roles, and primary business unit.
+The assignment cards offer searchable add dialogs and individual remove actions.
+Changes persist immediately, and the cards reload from Dataverse after each
+operation, including partial failures. Team-inherited roles are managed through
+team membership, not the direct security-role card.
+
+Editing is enabled by default. Set `allowTeamSelection`, `allowRoleSelection`,
+or `allowBusinessUnitSelection` to `false` to make the corresponding card
+read-only. The `teamsFilter`, `rolesFilter`, and `businessUnitsFilter` props
+accept OData expressions limiting available additions; existing assignments
+remain visible. These UI options are not authorization controls.
+
+A user has one primary business unit, so this card supports changing rather than
+removing or adding multiple units. Moving business units can affect roles and
+record access; review assignments afterward. Dataverse permissions and membership
+restrictions (such as automatically managed teams) still apply, and rejected
+changes are displayed as errors.
+
+Use `UserManagementStandalone` with `dataverseClient` and `dataverseResource`
+when supplying an authenticated client without a context provider.
+
 ## Contexts provided by the library
 
 ### 1. AuthenticationContext
